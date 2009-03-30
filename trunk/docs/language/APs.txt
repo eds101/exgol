@@ -1,19 +1,12 @@
-Tutorial
-	F Suhan, write transition rule section including transition examples
-	- Akshat, Complete the compiling and running EXGOL section
-	- Akshat, write about competing species
-	- Incorporate Suhan's transition changes, including images
-	- document example programs
-	
+Change populate to include state populate(corn, healthy, poisson(.5))
+grammar
+dot -> point
+
 Reference Manual
-	F Suhan, Write-up for the simulation section
-	- Andreas, Lexical Conventions (compare to KAml)
-		- Comments/whitespaces
-		- Tokens
-		- Make keyword list up to date
-	- Incorporate Suhan's changes
+	- Lexical Conventions
+	- Compiler reference implementation
+
 
 For both docs
-	- fix document formatting, justification?
 	- Go through all text to make it consistent
 	- Possibly adjust number of pages
