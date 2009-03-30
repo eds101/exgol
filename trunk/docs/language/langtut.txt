@@ -1,0 +1,91 @@
+Language tutorial (written by entire team, 15-20 pages).
+
+* Chapter 1 of Kernighan and Ritchie is a good model of a language tutorial.
+* Describe a few representative programs that illustrate the nature and scope of your language.
+* A "hello, world" program is de rigueur.
+
+Purpose of the tutorial
+Purpose is to be able to to write functioning program asap. The tutorial should not be exhaustive
+
+Introduction, more extensive then for C
+at least answer questions:
+1. What is a grid? (Can it be an arbitrary graph?)
+
+2. Is a grid finite? If so, how do you specify the behavior of the cells at
+the boundaries?
+
+3. What is the intended purpose of an EXGOL program? For example,
+is it to study the running behavior or the conditions for termination of a
+cellular automaton?
+
+4. Can the transition of a cell be determined by a bigger neighborhood
+other than its immediately adjacent cells?
+
+Introduction
+
+Getting Started
+ - Hello world, rules which for instance write a moving 'Hello World' on the screen :-) 
+ - first EXGOL program
+ - Add exercises
+
+Show actual example transitions
+ - Display the rule visually
+ - Modify the rule
+
+Illustrate the special extensions to GOL
+
+How to compile and run the program. 
+ - Explain the script-idea and how to compile directly
+ - Add exercises
+
+Basic Syntax
+
+Describe the three different program sections
+
+Since our minimal program is fairly complex maybe we should give a relatively complex examples and analyze it.
+
+List for example x number programs of increasing complexity
+1. Construct ordinary 1D/2D GoL
+2. Add competing species
+3. More complex, more states and rules
+4. Include probabilities
+
+Focus will be on increasing rule complexity
+
+# Mar. 25: Language reference manual (written by entire team, 25-35 pages).
+
+* Appendix A of Kernighan and Ritchie is a good model.
+* Give a complete description of the lexical and syntactic structure of your language.
+* Include a full grammar for your language.
+
+* Appendix A, the reference manual, is not the standard, but our attempt to convey the
+* essentials of the standard in a smaller space. It is meant for easy comprehension by
+* programmers, but not as a definition for compiler writers -- that role properly belongs to the
+* standard itself.
+
+Introduction
+
+Keywords
+  class, color.*, state, grid, grid_t, 
+  
+Lexical Conventions
+ - Tokens
+ - Comments
+ - Identifier/Keywords
+ - Constants
+
+Initialization Parameters
+
+Rules
+ - Syntax
+ - Operators
+
+Populating the grid
+
+Starting the simulation
+
+Complete Grammar
+
+Brian Kernighan and Dennis Ritchie, The C Programming Language, 2nd edition, Prentice Hall, 1988. This is the classic reference on ANSI C (C89).
+
+
