@@ -9,7 +9,7 @@ public class Condition {
 }
 
 class CondExpr {
-	private bool isNum;
+	private boolean isNum;
 	private int value;
 	private String cellClass; //i would name it class; but it's a keyword
 	private String state;

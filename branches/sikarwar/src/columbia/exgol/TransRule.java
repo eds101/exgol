@@ -1,5 +1,7 @@
 package columbia.exgol;
 
+import java.util.Vector;
+
 public class TransRule {
 	public String name;
 	public Trans type;
