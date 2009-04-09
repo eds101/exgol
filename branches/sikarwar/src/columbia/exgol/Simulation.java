@@ -22,3 +22,4 @@ public class Simulation {
 	public Vector<TransRule> simrules;
 	public int generations;
 }
+
