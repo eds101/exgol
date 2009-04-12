@@ -1,4 +1,12 @@
 gridsize:={5,5}
 class:={bacteria}
 state:={dead,live}
+gridtype:=bounded
+alias all:={dead,live}
 
+%%
+trans DEATH:=live->dead
+transrule LONELY { type:=DEATH
+
+}
+%%
