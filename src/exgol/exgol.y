@@ -6,86 +6,45 @@
 
 /* YACC Declarations */
 
+%token GRIDSIZE
 %token CLASS
 %token STATE
-%token GRIDSIZE
-%token GRIDTYPE
-%token ALIAS
-%token BOUND
-%token WRAP
-%token ASSIGN
 %token LBRACE
 %token RBRACE
-%token LBRACK
-%token RBRACK
-%token COM
-%token ID
+%token ASSIGN
 %token NUM
-%token NL
-%token SEP
-%token PND
+%token COM
 %token COL
-%token NULL
-
+%token COLOR
+%token NL
+%token ID
 /* Grammar follows */
 %%
-
-exgol	:
-	init_sec NL SEP;
-
-init_sec:
-	init_statements;
-
 init_statements: 
-	class_def		init_statements|
-	state_def		init_statements|
-	grid_def		init_statements|
-	gridtype_def 		init_statements|
-	alias_dec		init_statements|
-	NULL;
+	grid_def init_statements|
+	class_def init_statements|
+	state_def init_statements|
+	NL {System.out.println("init NL");};
 
-identifier_list:
- 	 ID COM identifier_list|
- 	 ID;
+grid_def	: GRIDSIZE ASSIGN LBRACE numeric_list RBRACE NL{System.out.println("Create Grid :" + $4.sval);};
+class_def	: CLASS	ASSIGN LBRACE identifier_list RBRACE NL{System.out.println("List of Classes" + $4.sval);};
+state_def	: STATE	ASSIGN LBRACE identifier_list RBRACE NL{System.out.println("List of States" + $4.sval);};
 
-numeric_list:
- 	 NUM COM numeric_list|
- 	 NUM;
+numeric_list: 	NUM {$$.sval = Integer.toString($1.ival);}|
+		NUM COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
 
-grid_def: 
-	GRIDSIZE ASSIGN LBRACE numeric_list RBRACE;
-
-class_def:
-	CLASS ASSIGN LBRACE identifier_list RBRACE;
-
-state_def:
-	STATE ASSIGN LBRACE identifier_list RBRACE;
-
-gridtype_def:
-	GRIDTYPE ASSIGN gridtype_values;
-
-gridtype_values: 
-	BOUND | 
-	WRAP;
-
-alias_dec:
-	ALIAS ID ASSIGN LBRACE identifier_list RBRACE;
-
+identifier_list: ID {$$.sval = $1.sval;} |
+		ID COM identifier_list 	{$$.sval = $1.sval + "," + $3.sval;}
 
 %%
 
 /* a reference to the lexer object */
 private Yylex lexer;
-static int gridx, gridy;
 
-private void set_grid(int x, int y){
-  gridx = x;
-  gridy = y;
-}
 
 /* interface to the lexer */
 private int yylex () {
-  int yyl_return = -1;
+  int yyl_return = 0;
   try {
     yyl_return = lexer.yylex();
   }
@@ -105,22 +64,10 @@ public Parser(Reader r) {
   lexer = new Yylex(r, this);
 }
 
-private static void createAndShowGUI() {
-  //Create and set up the window.
-  JFrame frame = new JFrame("EXGOL");
-  GridPanel pan = new GridPanel();
-  pan.setPreferredSize(new Dimension(10*gridx+1, 10*gridy+1));
-  frame.getContentPane().add(pan);
-  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-  frame.pack();
-  frame.setVisible(true);
-}
 
 /* that's how you use the parser */
 public static void main(String args[]) throws IOException {
   Parser yyparser = new Parser(new FileReader(args[0]));
   yyparser.yyparse();
-  
-  // create grid window
-  createAndShowGUI();
+
 }
