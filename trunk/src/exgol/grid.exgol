@@ -1,0 +1,4 @@
+gridsize:={5,5}
+class:={bacteria}
+state:={dead,live}
+

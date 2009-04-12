@@ -12,41 +12,33 @@
     this.yyparser = yyparser;
   }
 %}
-
+GRIDSIZE 	= "gridsize"
 CLASS 		= "class"
 STATE 		= "state"
-GRIDSIZE 	= "gridsize"
-GRIDTYPE	= "gridtype"
-ALIAS		= "alias"
-BOUND		= "bounded"
-WRAP		= "wrapped"
+ASSIGN 		= ":="
+LBRACE 		= "{"
+RBRACE 		= "}"
+COM 		= ","
+COL 		= ":"
+NL  		= ("\n" | "\r" | "\r\n")
+NUM		= [0-9]+
+ID		= [a-zA-Z]([a-zA-Z0-9])*
+WS		= ""|"\s"|"\t"
 
-ASSIGN 	= ":="
-LBRACE 	= "{"
-RBRACE 	= "}"
-LBRACK 	= "["
-RBRACK 	= "]"
-COM	= ","
-ID	= [a-zA-Z][a-zA-Z0-9]*
-NUM 	= [0-9]+
-NL  	= \n | \r | \r\n
-SEP	= "%%"
-PND	= "#"
-COL	= ":"
-NULL	= ""
 
 %%
+{GRIDSIZE}		{return Parser.GRIDSIZE;}
+{LBRACE}	    	{return Parser.LBRACE;}
+{RBRACE}    		{return Parser.RBRACE;}
+{ASSIGN}		{return Parser.ASSIGN;}
+{NL}			{return Parser.NL;}
+{COM}			{return Parser.COM;}
+{CLASS}			{return Parser.CLASS;}
+{STATE}			{return Parser.STATE;}
+{COL}			{return Parser.COL;}
+{WS}			{}
 
-/* operators */ 
-LBRACK | RBRACK    	{return (int) yycharat(0); }
-LBRACE		    	{return Parser.LBRACE; }
-RBRACE    		{return Parser.RBRACE; }
-GRIDSIZE ASSIGN		{return Parser.GRIDSIZE; }
-
-/* newline */
-{NL}   			{return Parser.NL; }
-{COM}   		{return Parser.COM; }
-
-/* float */
-{NUM}  { yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));
-         return Parser.NUM; }
+{NUM} 	{ yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));
+        return Parser.NUM; }
+{ID}	{ yyparser.yylval = new ParserVal(yytext()); 
+	return Parser.ID;}
