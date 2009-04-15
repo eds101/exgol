@@ -59,7 +59,7 @@
 %%
 
 //exgol
-exgol		: init_section SEP NL trans_section SEP{System.out.println("Exgol Parsed");};;
+exgol		: init_section SEP NL trans_section SEP {System.out.println("Exgol Parsed");};;
 
 //init
 init_section	: init_statements {System.out.println("Init Section Parsed");};
@@ -91,20 +91,36 @@ transrule_def	: TRANSRULE ID LBRACE rule_expressions RBRACE {System.out.println(
 rule_expressions: 
 		type_def optional_expressions;
 type_def	:
-		TYPE ASSIGN ID NL {System.out.println("type:" + $3.sval);} ;
+		TYPE ASSIGN ID NL {System.out.println("type:" + $3.sval);};
+
 optional_expressions:
+		rule_class	optional_expressions|
 		resolve		optional_expressions|
 		prob		optional_expressions|
+		condition	optional_expressions|
 		NL;
 
-resolve		: RESOLVE ASSIGN LBRACE identifier_list RBRACE {System.out.println("resolve:" + $4.sval);};
-prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM;
+resolve		: RESOLVE ASSIGN ID NL {System.out.println("resolve:" + $4.sval);};
+rule_class	: CLASS ASSIGN ID NL {System.out.println("class:" + $4.sval);};
+prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM NL {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
+condition	: CONDITION ASSIGN  condition_stmt compare condition_stmt NL;
 
-numeric_list: 	NUM {$$.sval = Integer.toString($1.ival);}|
-		NUM COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
+condition_stmt	: ID LBRACK range_stmt RBRACK|
+		  ID DOT ID DOT LBRACK range_stmt RBRACK|
+		  NUM;
 
-identifier_list: ID {$$.sval = $1.sval;} |
-		ID COM identifier_list 	{$$.sval = $1.sval + "," + $3.sval;}
+range_stmt	: NUM|
+		  NUM COM range_stmt|
+		  NUM DASH NUM|
+		  NUM DASH NUM COM range_stmt;
+
+compare		: EQ|LT|GT|NOT EQ;
+
+numeric_list	: NUM {$$.sval = Integer.toString($1.ival);}|
+		  NUM COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
+
+identifier_list : ID {$$.sval = $1.sval;} |
+		  ID COM identifier_list 	{$$.sval = $1.sval + "," + $3.sval;}
 
 %%
 
