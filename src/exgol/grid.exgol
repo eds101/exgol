@@ -7,6 +7,10 @@ alias all:={dead,live}
 %%
 trans DEATH:=live->dead
 transrule LONELY { type:=DEATH
+class:=all
+resolve:=DEATH
+condition:=bacteria[1-3]=1
+prob:=0.1
 
 }
 %%
