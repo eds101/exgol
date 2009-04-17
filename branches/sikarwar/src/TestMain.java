@@ -2,7 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import columbia.exgol.*;
+
+import columbia.exgol.intermediate.*;
 import columbia.exgol.simulation.GUI;
 import java.awt.Color;
 import java.util.Hashtable;
@@ -13,99 +14,99 @@ import java.util.Vector;
  * @author sikarwar
  */
 public class TestMain {
-	
-		public static void main(String args[]) {
-			Simulation s = new Simulation();
-			s.generations = 0;
 
-			s.gridsize = new Vector<Integer>();
-			s.gridsize.add(20);
-			s.gridsize.add(20);
+	public static void main(String args[]) {
+		Simulation s = new Simulation();
+		s.generations = 0;
 
-			s.gridtype = GridType.BOUNDED;
+		s.gridsize = new Vector<Integer>();
+		s.gridsize.add(20);
+		s.gridsize.add(20);
 
-			s.classes = new Hashtable<String, Color>();
-			s.classes.put("CELL", Color.BLACK);
+		s.gridtype = GridType.BOUNDED;
 
-			s.states = new Vector<String>();
-			s.states.add("ALIVE");
-			s.states.add("INJURED");
+		s.classes = new Hashtable<String, Color>();
+		s.classes.put("CELL", Color.BLACK);
 
-			s.trans = new Vector<Trans>();
+		s.states = new Vector<String>();
+		s.states.add("ALIVE");
+		s.states.add("INJURED");
 
-			Trans die = new Trans();
-			die.from = new Vector<String>();
-			die.from.add("ALIVE");
-			die.to = "EMPTY";
-			die.name = "DIE";
+		s.trans = new Vector<Trans>();
 
-			Trans breed = new Trans();
-			breed.from = new Vector<String>();
-			breed.from.add("EMPTY");
-			breed.to = "ALIVE";
-			breed.name = "BIRTH";
+		Trans die = new Trans();
+		die.from = new Vector<String>();
+		die.from.add("ALIVE");
+		die.to = "EMPTY";
+		die.name = "DIE";
 
-			s.trans.add(die);
-			s.trans.add(breed);
+		Trans breed = new Trans();
+		breed.from = new Vector<String>();
+		breed.from.add("EMPTY");
+		breed.to = "ALIVE";
+		breed.name = "BIRTH";
 
-			TransRule birth  = new TransRule("BIRTH");
-			birth.type = breed;
-			Vector<Integer> prox = new Vector<Integer>();
-			prox.add(1);
-			birth.cond.LHS = new CondExpr("peer", "EMPTY", prox);
-			birth.cond.op = RelopType.EQ;
-			birth.cond.RHS = new CondExpr(3);
+		s.trans.add(die);
+		s.trans.add(breed);
 
-			TransRule death  = new TransRule("DEATH");
-			death.type = die;
-			death.cond.LHS = new CondExpr("peer", "ALIVE", prox);
-			death.cond.op = RelopType.LT;
-			death.cond.RHS = new CondExpr(2);
+		TransRule birth = new TransRule("BIRTH");
+		birth.type = breed;
+		Vector<Integer> prox = new Vector<Integer>();
+		prox.add(1);
+		birth.cond.LHS = new CondExpr("peer", "EMPTY", prox);
+		birth.cond.op = RelopType.EQ;
+		birth.cond.RHS = new CondExpr(3);
 
-			TransRule crowded  = new TransRule("OVERPOPULATION");
-			crowded.type = die;
-			crowded.cond = new Condition(new CondExpr("peer", "ALIVE", prox),
-                    crowded.cond.op = RelopType.GT,
-                    new CondExpr(3));
+		TransRule death = new TransRule("DEATH");
+		death.type = die;
+		death.cond.LHS = new CondExpr("peer", "ALIVE", prox);
+		death.cond.op = RelopType.LT;
+		death.cond.RHS = new CondExpr(2);
 
-			s.transrule = new Vector<TransRule>();
-			s.transrule.add(birth);
-			s.transrule.add(death);
-			s.transrule.add(crowded);
+		TransRule crowded = new TransRule("OVERPOPULATION");
+		crowded.type = die;
+		crowded.cond = new Condition(new CondExpr("peer", "ALIVE", prox),
+				crowded.cond.op = RelopType.GT,
+				new CondExpr(3));
 
-			s.simrules = new Vector<TransRule>();
-			s.simrules.add(birth);
-			s.simrules.add(death);
-			s.simrules.add(crowded);
-			
-			Vector<Float> popArgs = new Vector<Float>();
-			popArgs.add(new Float(5));
-			popArgs.add(new Float(5));
-			popArgs.add(new Float(7));
-			popArgs.add(new Float(5));
+		s.transrule = new Vector<TransRule>();
+		s.transrule.add(birth);
+		s.transrule.add(death);
+		s.transrule.add(crowded);
 
-			/*Vector<Float> popArgs2 = new Vector<Float>();
-			popArgs2.add(new Float(0));
-			popArgs2.add(new Float(0));
-			popArgs2.add(new Float(5));
-			popArgs2.add(new Float(5));
-			Populate rect2 = new Populate("CELL", "INJURED", PopulateType.RECTANGLE, popArgs2);
-			s.populate.add(rect2);*/
+		s.simrules = new Vector<TransRule>();
+		s.simrules.add(birth);
+		s.simrules.add(death);
+		s.simrules.add(crowded);
 
-			Vector<Float> popDot1 = new Vector<Float>();
-			popDot1.add(new Float(5));
-			popDot1.add(new Float(6));
+		Vector<Float> popArgs = new Vector<Float>();
+		popArgs.add(new Float(5));
+		popArgs.add(new Float(5));
+		popArgs.add(new Float(7));
+		popArgs.add(new Float(5));
 
-			Vector<Float> popDot2 = new Vector<Float>();
-			popDot2.add(new Float(6));
-			popDot2.add(new Float(7));
+		/*Vector<Float> popArgs2 = new Vector<Float>();
+		popArgs2.add(new Float(0));
+		popArgs2.add(new Float(0));
+		popArgs2.add(new Float(5));
+		popArgs2.add(new Float(5));
+		Populate rect2 = new Populate("CELL", "INJURED", PopulateType.RECTANGLE, popArgs2);
+		s.populate.add(rect2);*/
+
+		Vector<Float> popDot1 = new Vector<Float>();
+		popDot1.add(new Float(5));
+		popDot1.add(new Float(6));
+
+		Vector<Float> popDot2 = new Vector<Float>();
+		popDot2.add(new Float(6));
+		popDot2.add(new Float(7));
 
 
-			s.populate = new Vector<Populate>();
-			s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-			s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-			s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
-			GUI gui = new GUI(s);
-			gui.run();
-		}
+		s.populate = new Vector<Populate>();
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
+		GUI gui = new GUI(s);
+		gui.run();
+	}
 }

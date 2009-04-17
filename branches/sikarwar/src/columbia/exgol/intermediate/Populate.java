@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package columbia.exgol;
+package columbia.exgol.intermediate;
 
 import java.util.Vector;
 

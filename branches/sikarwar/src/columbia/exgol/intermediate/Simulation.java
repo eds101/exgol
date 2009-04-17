@@ -1,4 +1,4 @@
-package columbia.exgol;
+package columbia.exgol.intermediate;
 
 import java.util.Vector;
 import java.util.Hashtable;

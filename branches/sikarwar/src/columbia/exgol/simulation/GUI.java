@@ -5,7 +5,7 @@
 
 package columbia.exgol.simulation;
 
-import columbia.exgol.*;
+import columbia.exgol.intermediate.*;
 import javax.swing.*;
 
 /**

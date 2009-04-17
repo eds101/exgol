@@ -5,7 +5,7 @@
 
 package columbia.exgol.simulation;
 
-import columbia.exgol.*;
+import columbia.exgol.intermediate.*;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
