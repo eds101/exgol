@@ -2,8 +2,21 @@ package columbia.exgol;
 
 public class Condition {
 	public CondExpr LHS;
-	public String op; //maybe an enum?
+	public RelopType op;
 	public CondExpr RHS;
+
+    public boolean alwaysTrue;
+
+    public Condition(){
+        alwaysTrue = false;
+    }
+
+    public Condition(CondExpr LHS, RelopType op, CondExpr RHS){
+        alwaysTrue = false;
+        this.LHS = LHS;
+        this.op = op;
+        this.RHS = RHS;
+    }
 }
 
 

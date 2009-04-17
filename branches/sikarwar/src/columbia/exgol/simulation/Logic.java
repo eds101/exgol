@@ -32,10 +32,39 @@ public class Logic {
 	}
 
 	void computeNextGen() {
-		iteration++;
+		Cell[][] oldCells, newCells;
+
+        iteration++;
 		if (iteration == 0) return;
-		
-		//TODO: update the GUI and arrays
+        if (iteration % 2 == 0){
+            oldCells = oddCells;
+            newCells = oddCells;
+        }
+        else{
+            oldCells = evenCells;
+            newCells = evenCells;
+        }
+        // for each cell evaluate all conditions
+		for (int y = 0; y < newCells[0].length; y++) {
+			for (int x = 0; x < newCells.length; x++) {
+                for(int c = 0;c < s.transrule.size();c++){
+                    TransRule tr = s.transrule.get(c);
+                    // Check that the rule applies
+                    if(!tr.appliesToClass(oldCells[x][y].className)) continue;
+                    if(!tr.appliesToState(oldCells[x][y].state)) continue;
+                    if(tr.checkCondition(oldCells, x, y, s.gridtype)){
+                        newCells[x][y].state = tr.type.to;
+                        if(newCells[x][y].state.equals("EMPTY"))
+                            newCells[x][y].className = "EMPTY";
+                    }
+                }
+			}
+		}
+
+        if (iteration % 2 == 0)
+            evenCells = newCells;
+        else
+            oddCells = newCells;
 	}
 
 	void fillRect(int index) {
@@ -85,7 +114,7 @@ public class Logic {
 		int x, y, z;
 		switch(s.gridsize.size()) {
 				case 1: //TODO
-					break;
+					;
 				case 2:
 					evenCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
 					oddCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
@@ -95,9 +124,8 @@ public class Logic {
 							oddCells[x][y] = new Cell();
 						}
 					}
-					break;
 			case 3: //TODO
-				break;
+				;
 		}
 
 		for (int i = 0; i < s.populate.size(); i++){

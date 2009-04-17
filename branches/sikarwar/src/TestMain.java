@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 import columbia.exgol.*;
-import columbia.exgol.CondExpr;
 import columbia.exgol.simulation.GUI;
 import java.awt.Color;
 import java.util.Hashtable;
@@ -58,20 +57,20 @@ public class TestMain {
 			Vector<Integer> prox = new Vector<Integer>();
 			prox.add(1);
 			birth.cond.LHS = new CondExpr("peer", "EMPTY", prox);
-			birth.cond.op = "=";
+			birth.cond.op = RelopType.EQ;
 			birth.cond.RHS = new CondExpr(3);
 
 			TransRule death  = new TransRule("DEATH");
 			death.type = die;
 			death.cond.LHS = new CondExpr("peer", "ALIVE", prox);
-			death.cond.op = "<";
+			death.cond.op = RelopType.LT;
 			death.cond.RHS = new CondExpr(2);
 
 			TransRule crowded  = new TransRule("OVERPOPULATION");
 			crowded.type = die;
-			crowded.cond.LHS = new CondExpr("peer", "ALIVE", prox);
-			crowded.cond.op = ">";
-			crowded.cond.RHS = new CondExpr(3);
+			crowded.cond = new Condition(new CondExpr("peer", "ALIVE", prox),
+                    crowded.cond.op = RelopType.GT,
+                    new CondExpr(3));
 
 			s.transrule = new Vector<TransRule>();
 			s.transrule.add(birth);
