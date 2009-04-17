@@ -85,7 +85,7 @@ public class Logic {
 		int x, y, z;
 		switch(s.gridsize.size()) {
 				case 1: //TODO
-					;
+					break;
 				case 2:
 					evenCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
 					oddCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
@@ -95,8 +95,9 @@ public class Logic {
 							oddCells[x][y] = new Cell();
 						}
 					}
+					break;
 			case 3: //TODO
-				;
+				break;
 		}
 
 		for (int i = 0; i < s.populate.size(); i++){
