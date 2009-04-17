@@ -55,10 +55,12 @@ public class Logic {
 						}
 						else {
 							//TODO: figure out the correct way
-							if(tr.classes.size() == 0)
+							if (tr.classes.size() == 0) {
 								newCells[x][y].className = s.classes.get(0);
-							else
+							}
+							else {
 								newCells[x][y].className = tr.classes.get(0);
+							}
 						}
 						break; //rule applied - go to next cell
 					}

@@ -44,8 +44,10 @@ public class EXGOLPanel extends JPanel {
 		int repeat = 250;
 		Timer t = new Timer();
 		t.schedule(new TimerTask() {
+
 			public void run() {
 				SwingUtilities.invokeLater(new Runnable() {
+
 					public void run() {
 						synchronized (updateLock) {
 							//this method is not re-entrant

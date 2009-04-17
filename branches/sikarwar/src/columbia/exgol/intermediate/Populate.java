@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package columbia.exgol.intermediate;
 
 import java.util.Vector;
@@ -12,6 +11,7 @@ import java.util.Vector;
  * @author sikarwar
  */
 public class Populate {
+
 	public String className;
 	public String stateName;
 	public PopulateType populateType;

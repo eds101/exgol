@@ -6,6 +6,7 @@ import java.awt.Color;
 
 public class Simulation {
 	// Init section
+
 	public Vector<String> classes;
 	public Hashtable<String, Color> classColors;
 	public Vector<String> states;
@@ -15,20 +16,23 @@ public class Simulation {
 	// Transition section
 	public Vector<Trans> trans;
 	public Vector<TransRule> transrule;
-	
 	// Simulation section
 	public Vector<TransRule> simrules;
 	public int generations;
 	public Vector<Populate> populate;
 
 	//singleton
-	private Simulation() {}
+	private Simulation() {
+	}
 	private static Simulation s = null;
+
 	public static Simulation createSimulation() {
-		if (s == null)
+		if (s == null) {
 			s = new Simulation();
+		}
 		return s;
 	}
+
 	public static Simulation getSimulation() {
 		return s;
 	}

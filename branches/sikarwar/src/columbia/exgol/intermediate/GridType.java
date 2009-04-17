@@ -1,3 +1,6 @@
 package columbia.exgol.intermediate;
 
-public enum GridType { BOUNDED, WRAPPED; }
+public enum GridType {
+
+	BOUNDED, WRAPPED;
+}

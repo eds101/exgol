@@ -8,6 +8,7 @@ import java.util.Vector;
  * @author sikarwar
  */
 public class TransRule {
+
 	public String name;
 	public Trans type;
 	public Vector<String> classes;
@@ -27,7 +28,8 @@ public class TransRule {
 	public boolean appliesToClass(String className) {
 		if (classes.size() == 0 || classes.contains(className)) {
 			return true;
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
@@ -35,7 +37,8 @@ public class TransRule {
 	public boolean appliesToState(String state) {
 		if (type.from.contains(state)) {
 			return true;
-		} else {
+		}
+		else {
 			return false;
 		}
 	}

@@ -2,8 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package columbia.exgol.simulation;
+
 import javax.swing.*;
 
 /**
@@ -11,6 +11,7 @@ import javax.swing.*;
  * @author sikarwar
  */
 public class GUI {
+
 	JFrame f;
 	EXGOLPanel p;
 	public static int SCALE = 10;

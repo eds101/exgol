@@ -27,7 +27,7 @@ public class TestMain {
 
 		s.classes = new Vector<String>();
 		s.classes.add("CELL");
-		
+
 		s.classColors = new Hashtable<String, Color>();
 		s.classColors.put("CELL", Color.BLACK);
 
@@ -73,7 +73,7 @@ public class TestMain {
 		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
 		RHS = new CondExpr(3);
 		crowded.cond = new Condition(LHS, RelopType.GT, RHS);
-		
+
 
 		s.transrule = new Vector<TransRule>();
 		s.transrule.add(death);
@@ -91,7 +91,7 @@ public class TestMain {
 		s.populate = new Vector<Populate>();
 
 		//GLIDER 1
-		popArgs= new Vector<Float>();
+		popArgs = new Vector<Float>();
 		popArgs.add(new Float(17));
 		popArgs.add(new Float(17));
 		popArgs.add(new Float(19));
@@ -104,7 +104,7 @@ public class TestMain {
 		popDot2 = new Vector<Float>();
 		popDot2.add(new Float(18));
 		popDot2.add(new Float(19));
-		
+
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
@@ -157,7 +157,6 @@ public class TestMain {
 		popDot1.add(new Float(24));
 		popDot1.add(new Float(26));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-
 
 		GUI gui = new GUI();
 		gui.run();
