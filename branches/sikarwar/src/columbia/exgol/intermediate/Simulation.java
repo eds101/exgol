@@ -6,7 +6,8 @@ import java.awt.Color;
 
 public class Simulation {
 	// Init section
-	public Hashtable<String, Color> classes;
+	public Vector<String> classes;
+	public Hashtable<String, Color> classColors;
 	public Vector<String> states;
 	public Vector<Integer> gridsize;
 	public GridType gridtype;
@@ -20,5 +21,16 @@ public class Simulation {
 	public int generations;
 	public Vector<Populate> populate;
 
+	//singleton
+	private Simulation() {}
+	private static Simulation s = null;
+	public static Simulation createSimulation() {
+		if (s == null)
+			s = new Simulation();
+		return s;
+	}
+	public static Simulation getSimulation() {
+		return s;
+	}
 }
 

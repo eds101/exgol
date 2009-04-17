@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package columbia.exgol.simulation;
 
 import java.awt.AlphaComposite;
@@ -15,18 +14,21 @@ import javax.swing.JPanel;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.SwingUtilities;
+import columbia.exgol.intermediate.*;
 
 /**
  *
  * @author sikarwar
  */
 public class EXGOLPanel extends JPanel {
+
 	Logic l;
 	Cell cells[][];
 	boolean doPaint;
 	Hashtable<String, Color> classColors;
 	Hashtable<String, AlphaComposite> stateComposites;
 	final Object lock = new Object();
+	final Object updateLock = new Object();
 
 	public EXGOLPanel(Logic l) {
 		this.l = l;
@@ -37,16 +39,22 @@ public class EXGOLPanel extends JPanel {
 	}
 
 	public void start() {
+		cells = l.populate();
+
 		int repeat = 250;
 		Timer t = new Timer();
 		t.schedule(new TimerTask() {
 			public void run() {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						Object temp = l.getNextGen();
-						synchronized(lock) {
-							cells = (Cell[][]) temp;
-							invalidate();
+						synchronized (updateLock) {
+							//this method is not re-entrant
+							Object temp = l.getNextGen();
+							synchronized (lock) {
+								//to avoid race with paintComponent
+								cells = (Cell[][]) temp;
+							}
+							repaint();
 						}
 					}
 				});
@@ -59,13 +67,12 @@ public class EXGOLPanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
 		int x, y;
-		synchronized(lock) {
-			if (cells == null) return;
+		synchronized (lock) {
 			for (y = 0; y < cells[0].length; y++) {
 				for (x = 0; x < cells.length; x++) {
 					g2d.setColor(classColors.get(cells[x][y].state));
 					g2d.setComposite(stateComposites.get(cells[x][y].state));
-					Rectangle r = new Rectangle(x*GUI.SCALE, y*GUI.SCALE, GUI.SCALE, GUI.SCALE);
+					Rectangle r = new Rectangle(x * GUI.SCALE, y * GUI.SCALE, GUI.SCALE, GUI.SCALE);
 					g2d.fill(r);
 				}
 			}

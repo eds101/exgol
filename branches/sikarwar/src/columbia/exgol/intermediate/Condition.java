@@ -8,7 +8,7 @@ public class Condition {
 	public boolean alwaysTrue;
 
 	public Condition() {
-		alwaysTrue = false;
+		alwaysTrue = true;
 	}
 
 	public Condition(CondExpr LHS, RelopType op, CondExpr RHS) {

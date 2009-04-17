@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package columbia.exgol.simulation;
 
 import columbia.exgol.intermediate.*;
@@ -10,65 +9,67 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Hashtable;
-import java.util.Map;
 
 /**
  *
  * @author sikarwar
  */
 public class Logic {
+
 	Simulation s;
 	int iteration;
 	Cell oddCells[][];
 	Cell evenCells[][];
 
-
 	Cell[][] getNextGen() {
-		computeNextGen();
-		if (iteration % 2 == 0)
-			return evenCells;
-		else
-			return oddCells;
-	}
-
-	void computeNextGen() {
 		Cell[][] oldCells, newCells;
 
-        iteration++;
-		if (iteration == 0) return;
-        if (iteration % 2 == 0){
-            oldCells = oddCells;
-            newCells = oddCells;
-        }
-        else{
-            oldCells = evenCells;
-            newCells = evenCells;
-        }
-        // for each cell evaluate all conditions
-		for (int y = 0; y < newCells[0].length; y++) {
-			for (int x = 0; x < newCells.length; x++) {
-                for(int c = 0;c < s.transrule.size();c++){
-                    TransRule tr = s.transrule.get(c);
-                    // Check that the rule applies
-                    if(!tr.appliesToClass(oldCells[x][y].className)) continue;
-                    if(!tr.appliesToState(oldCells[x][y].state)) continue;
-                    if(tr.checkCondition(oldCells, x, y, s.gridtype)){
-                        newCells[x][y].state = tr.type.to;
-                        if(newCells[x][y].state.equals("EMPTY"))
-                            newCells[x][y].className = "EMPTY";
-                    }
-                }
-			}
+		iteration++;
+		if (iteration % 2 == 0) {
+			oldCells = evenCells;
+			newCells = oddCells;
+		}
+		else {
+			oldCells = oddCells;
+			newCells = evenCells;
 		}
 
-        if (iteration % 2 == 0)
-            evenCells = newCells;
-        else
-            oddCells = newCells;
+		// for each cell evaluate all conditions
+		for (int x = 0; x < s.gridsize.get(0); x++) {
+			for (int y = 0; y < s.gridsize.get(1); y++) {
+				newCells[x][y].className = oldCells[x][y].className;
+				newCells[x][y].state = oldCells[x][y].state;
+				for (int c = 0; c < s.transrule.size(); c++) {
+					//TODO: should we be looping over sim rules instead?
+					TransRule tr = s.transrule.get(c);
+					if (!tr.appliesToClass(oldCells[x][y].className)) {
+						continue;
+					}
+					if (!tr.appliesToState(oldCells[x][y].state)) {
+						continue;
+					}
+					if (tr.checkCondition(oldCells, x, y, s.gridtype)) {
+						newCells[x][y].state = tr.type.to;
+						if (tr.type.to.equals("EMPTY")) {
+							newCells[x][y].className = "EMPTY";
+						}
+						else {
+							//TODO: figure out the correct way
+							if(tr.classes.size() == 0)
+								newCells[x][y].className = s.classes.get(0);
+							else
+								newCells[x][y].className = tr.classes.get(0);
+						}
+						break; //rule applied - go to next cell
+					}
+				}
+			}
+		}
+		return newCells;
 	}
 
 	void fillRect(int index) {
-		String cell  = s.populate.get(index).className;
+		String cell = s.populate.get(index).className;
 		String state = s.populate.get(index).stateName;
 		int x1, x2, y1, y2;
 		x1 = s.populate.get(index).populateArgs.get(0).intValue();
@@ -77,11 +78,12 @@ public class Logic {
 		y2 = s.populate.get(index).populateArgs.get(3).intValue();
 		int x, y;
 
-		for (x = x1; x <= x2; x++)
+		for (x = x1; x <= x2; x++) {
 			for (y = y1; y <= y2; y++) {
 				evenCells[x][y].className = cell;
 				evenCells[x][y].state = state;
 			}
+		}
 	}
 
 	void fillDot(int index) {
@@ -94,8 +96,8 @@ public class Logic {
 	}
 
 	Hashtable<String, Color> initColorMaps() {
-		s.classes.put("EMPTY", Color.BLACK);
-		return s.classes;
+		s.classColors.put("EMPTY", Color.BLACK);
+		return s.classColors;
 	}
 
 	Hashtable<String, AlphaComposite> initCompositeMap() {
@@ -103,32 +105,35 @@ public class Logic {
 		float trans;
 
 		stateComposites.put("EMPTY", AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0));
-		for(int i=0;i<s.states.size();i++){
-			trans = (float)(s.states.size()-i) / s.states.size();
+		for (int i = 0; i < s.states.size(); i++) {
+			trans = (float) (s.states.size() - i) / s.states.size();
 			stateComposites.put(s.states.get(i), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, trans));
 		}
 		return stateComposites;
 	}
 
-	void populate() {
-		int x, y, z;
-		switch(s.gridsize.size()) {
-				case 1: //TODO
-					;
-				case 2:
-					evenCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
-					oddCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
-					for (y = 0; y < evenCells[0].length; y++) {
-						for (x = 0; x < evenCells.length; x++) {
-							evenCells[x][y] = new Cell();
-							oddCells[x][y] = new Cell();
-						}
+	public Cell[][] populate() {
+		int x, y;
+		switch (s.gridsize.size()) {
+			case 1: //TODO
+				break;
+
+			case 2: //2-D
+				evenCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
+				oddCells = new Cell[s.gridsize.get(0)][s.gridsize.get(1)];
+				for (x = 0; x < s.gridsize.get(0); x++) {
+					for (y = 0; y < s.gridsize.get(1); y++) {
+						evenCells[x][y] = new Cell();
+						oddCells[x][y] = new Cell();
 					}
+				}
+				break;
+
 			case 3: //TODO
-				;
+				break;
 		}
 
-		for (int i = 0; i < s.populate.size(); i++){
+		for (int i = 0; i < s.populate.size(); i++) {
 			switch (s.populate.get(i).populateType) {
 				//TODO: implement all populate statements
 				case RECTANGLE:
@@ -139,12 +144,12 @@ public class Logic {
 					break;
 			}
 		}
+		return evenCells;
 	}
 
-	public Logic(Simulation s) {
-		this.s = s;
+	public Logic() {
+		s = Simulation.getSimulation();
 		iteration = -1;
-		populate();
 	}
 
 	public Dimension getDimension() {

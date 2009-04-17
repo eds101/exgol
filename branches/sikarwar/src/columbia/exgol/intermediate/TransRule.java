@@ -18,8 +18,8 @@ public class TransRule {
 	public TransRule(String name) {
 		this.name = name;
 		prob = (float) 1.0;
-		cond = new columbia.exgol.intermediate.Condition();
-		cond.alwaysTrue = true;
+		//cond = new Condition();
+		//cond.alwaysTrue = true;
 		resolve = new Vector<String>();
 		classes = new Vector<String>();
 	}

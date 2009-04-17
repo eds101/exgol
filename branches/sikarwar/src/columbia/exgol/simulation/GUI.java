@@ -4,8 +4,6 @@
  */
 
 package columbia.exgol.simulation;
-
-import columbia.exgol.intermediate.*;
 import javax.swing.*;
 
 /**
@@ -15,11 +13,11 @@ import javax.swing.*;
 public class GUI {
 	JFrame f;
 	EXGOLPanel p;
-	public static int SCALE = 15;
+	public static int SCALE = 10;
 
-	public GUI(Simulation s) {
+	public GUI() {
 		f = new JFrame("EXGOL");
-		p = new EXGOLPanel(new Logic(s));
+		p = new EXGOLPanel(new Logic());
 		f.add(p);
 	}
 

@@ -16,17 +16,20 @@ import java.util.Vector;
 public class TestMain {
 
 	public static void main(String args[]) {
-		Simulation s = new Simulation();
+		Simulation s = Simulation.createSimulation();
 		s.generations = 0;
 
 		s.gridsize = new Vector<Integer>();
-		s.gridsize.add(20);
-		s.gridsize.add(20);
+		s.gridsize.add(30);
+		s.gridsize.add(30);
 
 		s.gridtype = GridType.BOUNDED;
 
-		s.classes = new Hashtable<String, Color>();
-		s.classes.put("CELL", Color.BLACK);
+		s.classes = new Vector<String>();
+		s.classes.add("CELL");
+		
+		s.classColors = new Hashtable<String, Color>();
+		s.classColors.put("CELL", Color.BLACK);
 
 		s.states = new Vector<String>();
 		s.states.add("ALIVE");
@@ -49,64 +52,114 @@ public class TestMain {
 		s.trans.add(die);
 		s.trans.add(breed);
 
+		Vector<Integer> prox = new Vector<Integer>(); //proximity
+		prox.add(1);
+		CondExpr LHS, RHS;
+
 		TransRule birth = new TransRule("BIRTH");
 		birth.type = breed;
-		Vector<Integer> prox = new Vector<Integer>();
-		prox.add(1);
-		birth.cond.LHS = new CondExpr("peer", "EMPTY", prox);
-		birth.cond.op = RelopType.EQ;
-		birth.cond.RHS = new CondExpr(3);
+		LHS = new CondExpr(CondExpr.PEER, "EMPTY", prox);
+		RHS = new CondExpr(3);
+		birth.cond = new Condition(LHS, RelopType.EQ, RHS);
 
 		TransRule death = new TransRule("DEATH");
 		death.type = die;
-		death.cond.LHS = new CondExpr("peer", "ALIVE", prox);
-		death.cond.op = RelopType.LT;
-		death.cond.RHS = new CondExpr(2);
+		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
+		RHS = new CondExpr(2);
+		death.cond = new Condition(LHS, RelopType.LT, RHS);
 
 		TransRule crowded = new TransRule("OVERPOPULATION");
 		crowded.type = die;
-		crowded.cond = new Condition(new CondExpr("peer", "ALIVE", prox),
-				crowded.cond.op = RelopType.GT,
-				new CondExpr(3));
+		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
+		RHS = new CondExpr(3);
+		crowded.cond = new Condition(LHS, RelopType.GT, RHS);
+		
 
 		s.transrule = new Vector<TransRule>();
-		s.transrule.add(birth);
 		s.transrule.add(death);
 		s.transrule.add(crowded);
+		s.transrule.add(birth);
 
 		s.simrules = new Vector<TransRule>();
 		s.simrules.add(birth);
 		s.simrules.add(death);
 		s.simrules.add(crowded);
 
-		Vector<Float> popArgs = new Vector<Float>();
-		popArgs.add(new Float(5));
-		popArgs.add(new Float(5));
-		popArgs.add(new Float(7));
-		popArgs.add(new Float(5));
-
-		/*Vector<Float> popArgs2 = new Vector<Float>();
-		popArgs2.add(new Float(0));
-		popArgs2.add(new Float(0));
-		popArgs2.add(new Float(5));
-		popArgs2.add(new Float(5));
-		Populate rect2 = new Populate("CELL", "INJURED", PopulateType.RECTANGLE, popArgs2);
-		s.populate.add(rect2);*/
-
-		Vector<Float> popDot1 = new Vector<Float>();
-		popDot1.add(new Float(5));
-		popDot1.add(new Float(6));
-
-		Vector<Float> popDot2 = new Vector<Float>();
-		popDot2.add(new Float(6));
-		popDot2.add(new Float(7));
-
-
+		Vector<Float> popArgs;
+		Vector<Float> popDot1;
+		Vector<Float> popDot2;
 		s.populate = new Vector<Populate>();
+
+		//GLIDER 1
+		popArgs= new Vector<Float>();
+		popArgs.add(new Float(17));
+		popArgs.add(new Float(17));
+		popArgs.add(new Float(19));
+		popArgs.add(new Float(17));
+
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(17));
+		popDot1.add(new Float(18));
+
+		popDot2 = new Vector<Float>();
+		popDot2.add(new Float(18));
+		popDot2.add(new Float(19));
+		
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
-		GUI gui = new GUI(s);
+
+		//BLINKER
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(15));
+		popArgs.add(new Float(5));
+		popArgs.add(new Float(17));
+		popArgs.add(new Float(5));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+
+		//TOAD
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(5));
+		popArgs.add(new Float(15));
+		popArgs.add(new Float(7));
+		popArgs.add(new Float(15));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(4));
+		popArgs.add(new Float(16));
+		popArgs.add(new Float(6));
+		popArgs.add(new Float(16));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+
+
+		//LIGHT WEIGHT SPACESHIP
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(20));
+		popArgs.add(new Float(25));
+		popArgs.add(new Float(20));
+		popArgs.add(new Float(27));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(21));
+		popArgs.add(new Float(27));
+		popArgs.add(new Float(23));
+		popArgs.add(new Float(27));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(21));
+		popDot1.add(new Float(24));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(24));
+		popDot1.add(new Float(24));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(24));
+		popDot1.add(new Float(26));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+
+
+		GUI gui = new GUI();
 		gui.run();
 	}
 }
