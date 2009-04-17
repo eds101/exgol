@@ -90,7 +90,7 @@ public class CondExpr {
 				//go clock wise from top left
 				y1 = y - i;
 				if (y1 >= 0 && y1 < maxY) {
-					for (x1 = x - i + 1; x1 < x + i; x1++) //	-->
+					for (x1 = x - i + 1; x1 < x + i; x1++)	//	--->
 					{
 						if (x1 >= 0 && x1 < maxX) {
 							if (cells[x1][y1].isPeer(kernel)) {
@@ -102,9 +102,9 @@ public class CondExpr {
 
 				x1 = x + i;
 				if (x1 >= 0 && x1 < maxX) {
-					for (y1 = y - i + 1; y1 < y + i; y1++) //	|
-					{
-						if (y1 >= 0 && y1 < maxY) //	v
+					for (y1 = y - i + 1; y1 < y + i; y1++)	//	|
+					{										//	|
+						if (y1 >= 0 && y1 < maxY)			//	v
 						{
 							if (cells[x1][y1].isPeer(kernel)) {
 								cellCount++;
@@ -115,7 +115,7 @@ public class CondExpr {
 
 				y1 = y + i;
 				if (y1 >= 0 && y1 < maxY) {
-					for (x1 = x + i - 1; x1 > x - i; x1--) //	<--
+					for (x1 = x + i - 1; x1 > x - i; x1--)	//	<---
 					{
 						if (x1 >= 0 && x1 < maxX) {
 							if (cells[x1][y1].isPeer(kernel)) {
@@ -127,9 +127,9 @@ public class CondExpr {
 
 				x1 = x - i;
 				if (x1 >= 0 && x1 < maxX) {
-					for (y1 = y + i - 1; y1 > y - i; y1--) //	^
-					{
-						if (y1 >= 0 && y1 < maxY) //	|
+					for (y1 = y + i - 1; y1 > y - i; y1--)	//	^
+					{										//	|
+						if (y1 >= 0 && y1 < maxY)			//	|
 						{
 							if (cells[x1][y1].isPeer(kernel)) {
 								cellCount++;
