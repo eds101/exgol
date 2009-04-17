@@ -13,11 +13,7 @@ import java.util.Vector;
  * @author sikarwar
  */
 public class TestMain {
-
-		public void test1(Simulation s) {
-
-		}
-
+	
 		public static void main(String args[]) {
 			Simulation s = new Simulation();
 			s.generations = 0;

@@ -46,6 +46,7 @@ public class EXGOLPanel extends JPanel {
 						Object temp = l.getNextGen();
 						synchronized(lock) {
 							cells = (Cell[][]) temp;
+							invalidate();
 						}
 					}
 				});
@@ -59,6 +60,7 @@ public class EXGOLPanel extends JPanel {
 		Graphics2D g2d = (Graphics2D) g;
 		int x, y;
 		synchronized(lock) {
+			if (cells == null) return;
 			for (y = 0; y < cells[0].length; y++) {
 				for (x = 0; x < cells.length; x++) {
 					g2d.setColor(classColors.get(cells[x][y].state));
