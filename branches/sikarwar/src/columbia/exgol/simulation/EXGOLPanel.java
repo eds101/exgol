@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.SwingUtilities;
-import columbia.exgol.intermediate.*;
 
 /**
  *
@@ -61,7 +60,7 @@ public class EXGOLPanel extends JPanel {
 					}
 				});
 			}
-		}, 0, repeat);
+		}, repeat*10, repeat);
 	}
 
 	@Override

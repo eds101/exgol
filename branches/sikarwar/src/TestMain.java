@@ -20,8 +20,8 @@ public class TestMain {
 		s.generations = 0;
 
 		s.gridsize = new Vector<Integer>();
-		s.gridsize.add(30);
-		s.gridsize.add(30);
+		s.gridsize.add(100);
+		s.gridsize.add(50);
 
 		s.gridtype = GridType.BOUNDED;
 
@@ -96,17 +96,16 @@ public class TestMain {
 		popArgs.add(new Float(17));
 		popArgs.add(new Float(19));
 		popArgs.add(new Float(17));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
 		popDot1 = new Vector<Float>();
 		popDot1.add(new Float(17));
 		popDot1.add(new Float(18));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 
 		popDot2 = new Vector<Float>();
 		popDot2.add(new Float(18));
 		popDot2.add(new Float(19));
-
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
 
 		//BLINKER
@@ -130,7 +129,6 @@ public class TestMain {
 		popArgs.add(new Float(6));
 		popArgs.add(new Float(16));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-
 
 		//LIGHT WEIGHT SPACESHIP
 		popArgs = new Vector<Float>();
@@ -157,6 +155,94 @@ public class TestMain {
 		popDot1.add(new Float(24));
 		popDot1.add(new Float(26));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+
+		//Breeder
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(30));
+		popArgs.add(new Float(20));
+		popArgs.add(new Float(31));
+		popArgs.add(new Float(21));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(41));
+		popDot1.add(new Float(19));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(40));
+		popArgs.add(new Float(20));
+		popArgs.add(new Float(40));
+		popArgs.add(new Float(22));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(41));
+		popDot1.add(new Float(23));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(42));
+		popArgs.add(new Float(18));
+		popArgs.add(new Float(43));
+		popArgs.add(new Float(18));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(42));
+		popArgs.add(new Float(24));
+		popArgs.add(new Float(43));
+		popArgs.add(new Float(24));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(44));
+		popDot1.add(new Float(21));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(45));
+		popDot1.add(new Float(19));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(45));
+		popDot1.add(new Float(23));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(46));
+		popArgs.add(new Float(20));
+		popArgs.add(new Float(46));
+		popArgs.add(new Float(22));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(47));
+		popDot1.add(new Float(21));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(50));
+		popArgs.add(new Float(19));
+		popArgs.add(new Float(51));
+		popArgs.add(new Float(21));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(52));
+		popDot1.add(new Float(18));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(52));
+		popDot1.add(new Float(22));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(54));
+		popArgs.add(new Float(17));
+		popArgs.add(new Float(54));
+		popArgs.add(new Float(18));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(54));
+		popArgs.add(new Float(22));
+		popArgs.add(new Float(54));
+		popArgs.add(new Float(23));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(64));
+		popArgs.add(new Float(18));
+		popArgs.add(new Float(65));
+		popArgs.add(new Float(19));
+		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
 		GUI gui = new GUI();
 		gui.run();

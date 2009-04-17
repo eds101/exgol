@@ -14,7 +14,7 @@ public class GUI {
 
 	JFrame f;
 	EXGOLPanel p;
-	public static int SCALE = 10;
+	public static int SCALE = 5;
 
 	public GUI() {
 		f = new JFrame("EXGOL");
