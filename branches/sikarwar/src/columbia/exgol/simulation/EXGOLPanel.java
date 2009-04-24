@@ -13,7 +13,6 @@ import java.util.Hashtable;
 import javax.swing.JPanel;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -23,7 +22,6 @@ public class EXGOLPanel extends JPanel {
 
 	Logic l;
 	Cell cells[][];
-	boolean doPaint;
 	Hashtable<String, Color> classColors;
 	Hashtable<String, AlphaComposite> stateComposites;
 	final Object lock = new Object();
@@ -40,35 +38,32 @@ public class EXGOLPanel extends JPanel {
 
 	public void start() {
 		cells = l.populate();
+		long delay = 1500;
+		long repeat = 250;
 
-		int repeat = 250;
-		Timer t = new Timer();
-		t.schedule(new TimerTask() {
+		TimerTask generation = new TimerTask() {
 
 			public void run() {
-				SwingUtilities.invokeLater(new Runnable() {
-
-					public void run() {
-						//this method is not re-entrant
-						synchronized (updateLock) {
-							Object temp = l.getNextGen();
-							//to avoid race with paintComponent
-							synchronized (lock) {
-								cells = (Cell[][]) temp;
-							}
-							repaint();
-						}
+				synchronized (updateLock) {	//this method is not re-entrant
+					Object temp = l.getNextGen();
+					synchronized (lock) { //to avoid race with paintComponent
+						cells = (Cell[][]) temp;
 					}
-				});
+					repaint();
+				}
 			}
-		}, repeat * 10, repeat);
+		};
+
+		Timer t = new Timer();
+		t.scheduleAtFixedRate(generation, delay, repeat);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (cells == null)
+		if (cells == null) {
 			return;
+		}
 
 		Graphics2D g2d = (Graphics2D) g;
 		int x, y;
