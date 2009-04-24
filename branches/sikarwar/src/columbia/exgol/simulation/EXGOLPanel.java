@@ -30,6 +30,7 @@ public class EXGOLPanel extends JPanel {
 	final Object updateLock = new Object();
 
 	public EXGOLPanel(Logic l) {
+		cells = null;
 		this.l = l;
 		setPreferredSize(l.getDimension());
 		this.stateComposites = new Hashtable<String, AlphaComposite>();
@@ -48,11 +49,11 @@ public class EXGOLPanel extends JPanel {
 				SwingUtilities.invokeLater(new Runnable() {
 
 					public void run() {
+						//this method is not re-entrant
 						synchronized (updateLock) {
-							//this method is not re-entrant
 							Object temp = l.getNextGen();
+							//to avoid race with paintComponent
 							synchronized (lock) {
-								//to avoid race with paintComponent
 								cells = (Cell[][]) temp;
 							}
 							repaint();
@@ -60,12 +61,15 @@ public class EXGOLPanel extends JPanel {
 					}
 				});
 			}
-		}, repeat*10, repeat);
+		}, repeat * 10, repeat);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		if (cells == null)
+			return;
+
 		Graphics2D g2d = (Graphics2D) g;
 		int x, y;
 		synchronized (lock) {
