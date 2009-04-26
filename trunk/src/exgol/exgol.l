@@ -34,6 +34,13 @@ NEIGHBOR	= "neighbor"
 
 //COLOR		= "black"|"red"
 
+SIM		= "sim"
+START		= "start"
+POPULATE	= "populate"
+
+DOTFUNC		= "dot"
+RECTFUNC	= "rectangle"
+
 //assignment operators
 ASSIGN 		= ":="
 LBRACE 		= "{"
@@ -82,6 +89,12 @@ LT		= "<"
 {PEER}			{yyparser.yylval = new ParserVal(yytext()); return Parser.PEER;}
 {ENEMY}			{yyparser.yylval = new ParserVal(yytext()); return Parser.ENEMY;}
 {NEIGHBOR}		{yyparser.yylval = new ParserVal(yytext()); return Parser.NEIGHBOR;}
+{SIM}			{return Parser.SIM;}
+{START}			{return Parser.START;}
+{POPULATE}		{return Parser.POPULATE;}
+
+{DOTFUNC}		{return Parser.DOTFUNC;}
+{RECTFUNC}		{return Parser.RECTFUNC;}
 
 //{COLOR}			{ yyparser.yylval = new ParserVal(yytext());return Parser.COLOR;}
 
