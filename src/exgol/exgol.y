@@ -29,7 +29,12 @@
 %token PEER
 %token ENEMY
 %token NEIGHBOR
+%token SIM
+%token START
+%token POPULATE
 
+%token DOTFUNC
+%token RECTFUNC
 
 
 %token ASSIGN
@@ -65,7 +70,7 @@
 %%
 
 //exgol
-exgol		: init_section SEP NL trans_section SEP {System.out.println("Exgol Parsed");};;
+exgol		: init_section SEP NL trans_section SEP NL simulation_section{System.out.println("Exgol Parsed");};
 
 //init
 init_section	: init_statements {System.out.println("Init Section Parsed");};
@@ -104,7 +109,7 @@ trans_statements:
 						}|
 		NL 				{
 						//System.out.println("Trans Empty Line");
-						}
+						};
 
 trans_def	: TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID NL	{addTrans($9.sval,$2.sval);};
 transrule_def	: TRANSRULE ID LBRACE rule_expressions RBRACE NL 		{setRuleName($2.sval);addRule();};
@@ -150,6 +155,48 @@ compare		: EQ {$$.sval = "EQ";}|
 		  NOT EQ {$$.sval = "NEQ";};
 		;
 
+//sim
+
+simulation_section:
+		simulation_stmts;
+
+simulation_stmts:
+		populate_stmt simulation_stmts|
+		sim_stmt simulation_stmts|
+		start_stmt simulation_stmts|
+		NL;
+
+
+populate_stmt:
+	POPULATE LPARAN ID COM ID COM fill_func RPARAN NL{
+							popSim($3.sval, $5.sval);
+							//System.out.println("Populate " + $3.sval + "," + $5.sval + "," + $7.sval);
+							};
+
+
+fill_func:
+	//DOTFUNC LBRACK NUM COM NUM RBRACK {System.out.println("Dot Function");}|
+	//RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {System.out.println("Rectangle Function");};
+	DOTFUNC LBRACK NUM COM NUM RBRACK {	
+						setPopType("dot");
+						popParams( new float[] {$3.ival, $5.ival});
+						//System.out.println("Dot Function");
+						}|
+	RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {
+						setPopType("rectangle");
+						popParams( new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
+						//System.out.println("Rectangle Function");
+						};
+
+sim_stmt:
+	SIM ID ASSIGN LBRACE identifier_list RBRACE NL {System.out.println("Sim Function");};
+
+start_stmt:
+	START LPARAN NUM COM ID RPARAN NL {System.out.println("Start Function");};
+
+
+//generic
+
 numeric_list	: NUM {$$.sval = Integer.toString($1.ival);}|
 		  NUM COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
 
@@ -166,12 +213,21 @@ identifier_list : ID 				{addID($1.sval); } |
 
 /* a reference to the lexer object */
 private Yylex lexer;
+
 static Simulation s;
+
+				
+Vector<Integer> prox = new Vector<Integer>(); //proximity
 Vector<String> idList = new Vector<String>();
-CondExpr cond;
+static Vector<Float> popArgs = new Vector<Float>();
+
 TransRule trRule = new TransRule("Deafult");
+CondExpr cond;
 CondExpr LHS, RHS;
-static Vector<Integer> prox = new Vector<Integer>(); //proximity
+
+PopulateType ptype;
+
+
 
 /* interface to the lexer */
 private int yylex () {
@@ -182,6 +238,7 @@ private int yylex () {
   catch (IOException e) {
     System.err.println("IO error :"+e);
   }
+  if (yyl_return == EOF) { return 0;}
   return yyl_return;
 }
 
@@ -341,6 +398,29 @@ private void addRule(){
 	trRule = new TransRule("Deafult");
 }
 
+private void popParams(float[] params){
+	//popArgs.clear();
+	popArgs = new Vector<Float>();
+	for(float i:params){
+	System.out.println(i);
+	popArgs.add(new Float(i));
+	}
+}
+private void setPopType(String t){
+	if (t.equals("dot")) ptype = PopulateType.DOT;
+	else if (t.equals("rectangle")) ptype = PopulateType.RECTANGLE;
+	else System.out.println("No Pop Type matched for: " + t);
+}
+
+private void popSim(String sClass, String sState){
+	s.populate.add(new Populate(sClass, sState, ptype, popArgs));
+	//System.out.println(sClass + " - " + sState + " - " + ptype);
+	//popArgs.clear();
+	//popArgs.add(new Float(17));
+	//popArgs.add(new Float(18));
+	//s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popArgs));
+}
+
 public static void main(String args[]) throws IOException {
 
 		s = Simulation.createSimulation();
@@ -353,6 +433,8 @@ public static void main(String args[]) throws IOException {
 		s.trans = new Vector<Trans>();
 		s.transrule = new Vector<TransRule>();
 		s.simrules = new Vector<TransRule>();
+		s.populate = new Vector<Populate>();
+		
 
 	  	Parser yyparser = new Parser(new FileReader(args[0]));
 	 	yyparser.yyparse();
@@ -364,14 +446,27 @@ public static void main(String args[]) throws IOException {
 //		System.out.println(tr.name + ";" + tr.type.name);
 		}
 
+		for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
+		{		
+		Populate p = (Populate) e.nextElement();
+		System.out.println(p.className + " - " + p.stateName + " - " + p.populateType);
+
+
+			for (Enumeration e2 = p.populateArgs.elements(); e2.hasMoreElements();)
+			{		
+				Float r = (Float) e2.nextElement();
+				System.out.println(r);
+			}
+
+		}
 		//s.simrules.add(birth);
 		//s.simrules.add(death);
 		//s.simrules.add(crowded);
-
-		Vector<Float> popArgs;
+		
+		/*
 		Vector<Float> popDot1;
 		Vector<Float> popDot2;
-		s.populate = new Vector<Populate>();
+
 
 		//GLIDER 1
 		popArgs = new Vector<Float>();
@@ -390,142 +485,7 @@ public static void main(String args[]) throws IOException {
 		popDot2.add(new Float(18));
 		popDot2.add(new Float(19));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
-
-		//BLINKER
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(15));
-		popArgs.add(new Float(5));
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(5));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-
-		//TOAD
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(5));
-		popArgs.add(new Float(15));
-		popArgs.add(new Float(7));
-		popArgs.add(new Float(15));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(4));
-		popArgs.add(new Float(16));
-		popArgs.add(new Float(6));
-		popArgs.add(new Float(16));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-
-		//LIGHT WEIGHT SPACESHIP
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(20));
-		popArgs.add(new Float(25));
-		popArgs.add(new Float(20));
-		popArgs.add(new Float(27));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(21));
-		popArgs.add(new Float(27));
-		popArgs.add(new Float(23));
-		popArgs.add(new Float(27));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(21));
-		popDot1.add(new Float(24));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(24));
-		popDot1.add(new Float(24));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(24));
-		popDot1.add(new Float(26));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-
-		//Breeder
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(30));
-		popArgs.add(new Float(20));
-		popArgs.add(new Float(31));
-		popArgs.add(new Float(21));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(41));
-		popDot1.add(new Float(19));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(40));
-		popArgs.add(new Float(20));
-		popArgs.add(new Float(40));
-		popArgs.add(new Float(22));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(41));
-		popDot1.add(new Float(23));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(42));
-		popArgs.add(new Float(18));
-		popArgs.add(new Float(43));
-		popArgs.add(new Float(18));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(42));
-		popArgs.add(new Float(24));
-		popArgs.add(new Float(43));
-		popArgs.add(new Float(24));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(44));
-		popDot1.add(new Float(21));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(45));
-		popDot1.add(new Float(19));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(45));
-		popDot1.add(new Float(23));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(46));
-		popArgs.add(new Float(20));
-		popArgs.add(new Float(46));
-		popArgs.add(new Float(22));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(47));
-		popDot1.add(new Float(21));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(50));
-		popArgs.add(new Float(19));
-		popArgs.add(new Float(51));
-		popArgs.add(new Float(21));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(52));
-		popDot1.add(new Float(18));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(52));
-		popDot1.add(new Float(22));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(54));
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(54));
-		popArgs.add(new Float(18));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(54));
-		popArgs.add(new Float(22));
-		popArgs.add(new Float(54));
-		popArgs.add(new Float(23));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(64));
-		popArgs.add(new Float(18));
-		popArgs.add(new Float(65));
-		popArgs.add(new Float(19));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+*/
 
 		GUI gui = new GUI();
 		gui.run();
