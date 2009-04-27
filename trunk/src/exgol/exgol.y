@@ -49,7 +49,7 @@
 %token NUM
 
 %token SEP
-%token PND
+%token COMMENT
 %token COL
 %token COM
 %token DOT
@@ -72,6 +72,8 @@
 //exgol
 exgol		: init_section SEP NL trans_section SEP NL simulation_section{System.out.println("Exgol Parsed");};
 
+comment		: 
+
 //init
 init_section	: init_statements {System.out.println("Init Section Parsed");};
 
@@ -81,6 +83,8 @@ init_statements	:
 		class_def 	init_statements|
 		state_def 	init_statements|
 		alias_dec 	init_statements|
+		COMMENT		init_statements|
+		NL		init_statements|
 		NL {System.out.println("Init Empty Line");};
 
 grid_def	: GRIDSIZE ASSIGN LBRACE dim_list RBRACE NL	{//System.out.println("Grid Generated");
@@ -107,6 +111,8 @@ trans_statements:
 		transrule_def trans_statements {
 						//System.out.println("Trans Rule");
 						}|
+		COMMENT	      trans_statements |
+		NL		trans_statements |
 		NL 				{
 						//System.out.println("Trans Empty Line");
 						};
@@ -164,6 +170,8 @@ simulation_stmts:
 		populate_stmt simulation_stmts|
 		sim_stmt simulation_stmts|
 		start_stmt simulation_stmts|
+		COMMENT	simulation_statements|
+		NL simulation_statements|
 		NL;
 
 
