@@ -8,18 +8,9 @@ gridtype:=bounded
 %%
 trans BREED:={EMPTY}->ALIVE
 trans DIE:={ALIVE}->EMPTY
-transrule BIRTH	 { type:=BREED
-condition:=peer[1]=3
-
-}
-transrule DEATH	 { type:=DIE
-condition:=peer.ALIVE[1]<2
-
-}
-transrule OVERPOPULATION { type:=DIE
-condition:=peer.ALIVE[1]>3
-
-}
+transrule BIRTH	{type:=BREED condition:=peer[1]=3}
+transrule DEATH	{type:=DIE condition:=peer.ALIVE[1]<2}
+transrule OVERPOPULATION {type:=DIE condition:=peer.ALIVE[1]>3}
 
 %%
 #glider 1
