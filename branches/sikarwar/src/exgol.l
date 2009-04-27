@@ -34,7 +34,7 @@ NEIGHBOR	= "neighbor"
 
 //COLOR		= "black"|"red"
 
-SIM		= "sim"
+SIM			= "sim"
 START		= "start"
 POPULATE	= "populate"
 
@@ -62,13 +62,13 @@ NL  		= ("\n" | "\r" | "\r\n")
 WS		= " "|"\s"|"\t"
 SEP		= "%%"
 
-COMMENT		= "#".*$
-DOT		= "."
+COMMENT		= "#".*{NL}
+DOT			= "."
 DASH		= "-"
-EQ		= "="
-NOT		= "!"
-GT		= ">"
-LT		= "<"
+EQ			= "="
+NOT			= "!"
+GT			= ">"
+LT			= "<"
 
 
 %%
@@ -99,8 +99,8 @@ LT		= "<"
 //{COLOR}			{ yyparser.yylval = new ParserVal(yytext());return Parser.COLOR;}
 
 {ASSIGN}		{return Parser.ASSIGN;}
-{LBRACE}	    	{return Parser.LBRACE;}
-{RBRACE}    		{return Parser.RBRACE;}
+{LBRACE}	    {return Parser.LBRACE;}
+{RBRACE}    	{return Parser.RBRACE;}
 {COM}			{return Parser.COM;}
 {COL}			{return Parser.COL;}
 
