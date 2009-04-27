@@ -357,8 +357,8 @@ private void setRuleType(String ruleName){
 	{
 
 		Trans tr = (Trans) e.nextElement();
-		//System.out.println("Compare To " + tr.getname()); 
-		if (ruleName.equals(tr.getname())){
+		//System.out.println("Compare To " + tr.getName()); 
+		if (ruleName.equals(tr.getName())){
 		trRule.type = tr;
 		//System.out.println("Rule Type " + ruleName); 
 		};
