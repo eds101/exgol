@@ -15,4 +15,9 @@ public class Trans {
 	public Trans() {
 		from = new Vector<String>();
 	}
+
+	public String getName() {
+		return this.name;
+	}
+	
 }
