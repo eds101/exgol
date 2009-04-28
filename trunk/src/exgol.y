@@ -170,8 +170,8 @@ simulation_stmts:
 		populate_stmt simulation_stmts|
 		sim_stmt simulation_stmts|
 		start_stmt simulation_stmts|
-		COMMENT	simulation_statements|
-		NL simulation_statements|
+		COMMENT	simulation_stmts|
+		NL simulation_stmts|
 		NL;
 
 
