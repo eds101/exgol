@@ -87,19 +87,19 @@ init_statements	:
 		NL		init_statements|
 		NL {System.out.println("Init Empty Line");};
 
-grid_def	: GRIDSIZE ASSIGN LBRACE dim_list RBRACE NL	{//System.out.println("Grid Generated");
+grid_def	: WS GRIDSIZE WS ASSIGN WS LBRACE WS dim_list WS RBRACE WS NL	{//System.out.println("Grid Generated");
 								};
 
-class_def	: CLASS	ASSIGN LBRACE identifier_list RBRACE NL	{//System.out.println("List of Classes ");
+class_def	: WS CLASS WS ASSIGN WS LBRACE WS identifier_list WS RBRACE WS NL	{//System.out.println("List of Classes ");
 								addClasses();//printIDList();
 								};
 
-state_def	: STATE	ASSIGN LBRACE identifier_list RBRACE NL	{//System.out.println("List of States ");
+state_def	: WS STATE WS ASSIGN WS LBRACE WS identifier_list WS RBRACE WS NL	{//System.out.println("List of States ");
 								addStates();//printIDList();
 								};
-gridtype_def	: GRIDTYPE ASSIGN BOUND NL 			{setGridType(1);}|
-		  GRIDTYPE ASSIGN WRAP NL 			{setGridType(2);};
-alias_dec	: ALIAS ID ASSIGN LBRACE identifier_list RBRACE NL {System.out.println("Alias " + $2.sval + " for " + $5.sval);};
+gridtype_def	: WS GRIDTYPE WS ASSIGN WS BOUND WS NL 			{setGridType(1);}|
+		  WS GRIDTYPE WS ASSIGN WS WRAP WS NL 			{setGridType(2);};
+alias_dec	: WS ALIAS WS ID WS ASSIGN WS LBRACE WS identifier_list WS RBRACE WS NL {System.out.println("Alias " + $2.sval + " for " + $5.sval);};
 
 //trans
 trans_section	: trans_statements {System.out.println("Trans Section Parsed");};
@@ -117,14 +117,15 @@ trans_statements:
 						//System.out.println("Trans Empty Line");
 						};
 
-trans_def	: TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID NL	{addTrans($9.sval,$2.sval);};
-transrule_def	: TRANSRULE ID LBRACE rule_expressions RBRACE NL 		{setRuleName($2.sval);addRule();};
+trans_def	: WS TRANS WS ID WS ASSIGN WS LBRACE WS identifier_list WS RBRACE WS DASH WS GT WS ID WS NL	{addTrans($9.sval,$2.sval);};
+transrule_def	: WS TRANSRULE WS ID WS LBRACE WS rule_expressions WS RBRACE WS NL 		{setRuleName($2.sval);addRule();};
 
 rule_expressions: 
 		type_def optional_expressions;
 type_def	:
-		TYPE ASSIGN ID NL {setRuleType($3.sval);};
+		WS TYPE WS ASSIGN WS ID WS NL {setRuleType($3.sval);};
 
+//eric here -- this is weird.. where shud line breaks be exactly
 optional_expressions:
 		rule_class	optional_expressions|
 		resolve		optional_expressions|
@@ -132,17 +133,19 @@ optional_expressions:
 		condition	optional_expressions|
 		NL;
 
-resolve		: RESOLVE ASSIGN ID NL {System.out.println("resolve:" + $4.sval);};
-rule_class	: CLASS ASSIGN ID NL {System.out.println("class:" + $4.sval);};
-prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM NL {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
-condition	: CONDITION ASSIGN  lhs compare rhs {setCondition($4.sval);};
-lhs		: condition_stmt {setLHS();};
-rhs		: condition_stmt NL {setRHS();};
+//eric here -- this is weird.. where shud line breaks be exactly
+resolve		: WS RESOLVE WS ASSIGN WS ID WS NL {System.out.println("resolve:" + $4.sval);};
+rule_class	: WS CLASS WS ASSIGN WS ID WS NL {System.out.println("class:" + $4.sval);};
+//eric here NUM| PROB -- hUH?
+prob		: WS PROB WS ASSIGN WS NUM|PROB WS ASSIGN WS NUM WS DOT WS NUM WS NL {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
+condition	: WS CONDITION WS ASSIGN  WS lhs WS compare WS rhs WS NL {setCondition($4.sval);};
+lhs		: WS condition_stmt WS {setLHS();};
+rhs		: WS condition_stmt WS {setRHS();};
 
-condition_stmt	: ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"EMPTY");}|
-		  builtin_alias LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"EMPTY");}|
-		  builtin_alias DOT ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval, $3.sval);}|
-		  NUM {setConditionExpr($1.ival);};
+condition_stmt	: WS ID WS LBRACK WS range_stmt WS RBRACK WS {setConditionExpr($1.sval,"EMPTY");}|
+		  WS builtin_alias WS LBRACK WS range_stmt WS RBRACK WS {setConditionExpr($1.sval,"EMPTY");}|
+		  WS builtin_alias WS DOT WS ID WS LBRACK WS range_stmt WS RBRACK WS {setConditionExpr($1.sval, $3.sval);}|
+		  WS NUM WS {setConditionExpr($1.ival);};
 
 builtin_alias	: PEER {$$.sval = $1.sval;}|
 		  NEIGHBOR {$$.sval = $1.sval;}|
@@ -170,13 +173,13 @@ simulation_stmts:
 		populate_stmt simulation_stmts|
 		sim_stmt simulation_stmts|
 		start_stmt simulation_stmts|
-		COMMENT	simulation_statements|
-		NL simulation_statements|
+		COMMENT	simulation_stmts|
+		NL simulation_stmts|
 		NL;
 
 
 populate_stmt:
-	POPULATE LPARAN ID COM ID COM fill_func RPARAN NL{
+	WS POPULATE WS LPARAN WS ID WS COM WS ID WS COM WS fill_func WS RPARAN WS NL{
 							popSim($3.sval, $5.sval);
 							//System.out.println("Populate " + $3.sval + "," + $5.sval + "," + $7.sval);
 							};
@@ -185,37 +188,37 @@ populate_stmt:
 fill_func:
 	//DOTFUNC LBRACK NUM COM NUM RBRACK {System.out.println("Dot Function");}|
 	//RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {System.out.println("Rectangle Function");};
-	DOTFUNC LBRACK NUM COM NUM RBRACK {	
+	WS DOTFUNC WS LBRACK WS NUM WS COM WS NUM WS RBRACK WS {	
 						setPopType("dot");
 						popParams( new float[] {$3.ival, $5.ival});
 						//System.out.println("Dot Function");
 						}|
-	RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {
+	WS RECTFUNC WS LBRACK WS NUM WS COM WS NUM WS COM WS NUM WS COM WS NUM WS RBRACK WS {
 						setPopType("rectangle");
 						popParams( new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
 						//System.out.println("Rectangle Function");
 						};
 
 sim_stmt:
-	SIM ID ASSIGN LBRACE identifier_list RBRACE NL {System.out.println("Sim Function");};
+	WS SIM WS ID WS ASSIGN WS LBRACE WS identifier_list WS RBRACE WS NL WS {System.out.println("Sim Function");};
 
 start_stmt:
-	START LPARAN NUM COM ID RPARAN NL {System.out.println("Start Function");};
+	WS START WS LPARAN WS NUM WS COM WS ID WS RPARAN WS NL {System.out.println("Start Function");};
 
 
 //generic
 
-numeric_list	: NUM {$$.sval = Integer.toString($1.ival);}|
-		  NUM COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
+numeric_list	: WS NUM WS {$$.sval = Integer.toString($1.ival);}|
+		  WS NUM WS COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
 
-dim_list	: NUM {addDim($1.ival);}|
-		  NUM COM dim_list {addDim($1.ival);};
+dim_list	: WS NUM WS {addDim($1.ival);}|
+		  WS NUM WS COM dim_list {addDim($1.ival);};
 
 
-identifier_list : ID 				{addID($1.sval); } |
-		  ID COM identifier_list 	{addID($1.sval); } |
-		  ID COL ID 			{addID($1.sval); addColor($1.sval, $3.sval);} |
-		  ID COL ID COM identifier_list {addID($1.sval); addColor($1.sval, $3.sval);};
+identifier_list : WS ID WS  				{addID($1.sval); } |
+		  WS ID WS COM WS identifier_list 	{addID($1.sval); } |
+		  WS ID WS COL WS ID WS  		{addID($1.sval); addColor($1.sval, $3.sval);} |
+		  WS ID WS COL WS ID WS COM identifier_list {addID($1.sval); addColor($1.sval, $3.sval);};
 
 %%
 
