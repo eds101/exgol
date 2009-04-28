@@ -62,7 +62,7 @@ NL  		= ("\n" | "\r" | "\r\n")
 WS		= " "|"\s"|"\t"
 SEP		= "%%"
 
-COMMENT		= "#".*$
+COMMENT		= "#".*{NL}
 DOT		= "."
 DASH		= "-"
 EQ		= "="
