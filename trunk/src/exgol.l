@@ -62,7 +62,6 @@ NL  		= ("\n" | "\r" | "\r\n")
 WS		= " "|"\s"|"\t"
 SEP		= "%%"
 
-COMMENT		= "#".*{NL}
 DOT		= "."
 DASH		= "-"
 EQ		= "="
@@ -108,7 +107,8 @@ LT		= "<"
 {RBRACK}		{return Parser.RBRACK;}
 {LPARAN}		{return Parser.LPARAN;}
 {RPARAN}		{return Parser.RPARAN;}
-//{PND}			{return Parser.PND;}
+
+#.*/{NL}		{}
 {DOT}			{return Parser.DOT;}
 {DASH}			{return Parser.DASH;}
 {EQ}			{return Parser.EQ;}
