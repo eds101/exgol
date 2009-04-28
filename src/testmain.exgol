@@ -1,25 +1,23 @@
-gridsize:={50,100}
+#ExGol Example Program
+
+gridsize:={50,100} #END OF LINE COMMENT TEST
 class:={CELL:black}
 state:={ALIVE,INJURED}
 gridtype:=bounded
 
 %%
+
 trans BREED:={EMPTY}->ALIVE
 trans DIE:={ALIVE}->EMPTY
 transrule BIRTH	{type:=BREED
-condition:=peer[1]=3
-
-}
+condition:=peer[1]=3}
 transrule DEATH	{type:=DIE
-condition:=peer.ALIVE[1]<2
-
-}
+condition:=peer.ALIVE[1]<2}
 transrule OVERPOPULATION {type:=DIE
-condition:=peer.ALIVE[1]>3
-
-}
+condition:=peer.ALIVE[1]>3}
 
 %%
+
 #glider 1
 populate(CELL, ALIVE, dot[17,18])
 populate(CELL, ALIVE, dot[18,19])
@@ -27,6 +25,8 @@ populate(CELL, ALIVE, rectangle[17,17,19,17])
 
 #blinker
 populate(CELL, ALIVE, rectangle[15,5,17,5])
+
+#test part 2 koajfo$@)I#2 9{}{}{} {#@( @ 
 
 #toad
 populate(CELL, ALIVE, rectangle[5,15,7,15])
@@ -60,4 +60,3 @@ populate(CELL, ALIVE, rectangle[64,18,65,19])
 
 sim gol:={BREED,DEATH,OVERPOPULATION}
 start(0,gol)
-
