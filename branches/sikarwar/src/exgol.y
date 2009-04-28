@@ -137,7 +137,7 @@ optional_expressions:
 resolve		: WS RESOLVE WS ASSIGN WS ID WS NL {System.out.println("resolve:" + $4.sval);};
 rule_class	: WS CLASS WS ASSIGN WS ID WS NL {System.out.println("class:" + $4.sval);};
 //eric here NUM| PROB -- hUH?
-prob		: WS PROB WS ASSIGN WS NUM|PROB WS ASSIGN WS NUM WS DOT WS NUM WS NL {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
+prob		: WS PROB WS ASSIGN WS NUM | PROB WS ASSIGN WS NUM WS DOT WS NUM WS NL {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
 condition	: WS CONDITION WS ASSIGN  WS lhs WS compare WS rhs WS NL {setCondition($4.sval);};
 lhs		: WS condition_stmt WS {setLHS();};
 rhs		: WS condition_stmt WS {setRHS();};
