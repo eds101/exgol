@@ -61,3 +61,4 @@ populate(CELL, ALIVE, rectangle[64,18,65,19])
 
 sim gol:={BREED,DEATH,OVERPOPULATION}
 start(0,gol)
+
