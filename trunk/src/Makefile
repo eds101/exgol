@@ -12,5 +12,4 @@ test:
 	cd build; java TestMain
 
 clean:
-	rm -rf build ParserVal.java Yylex.java Parser.java
-	mkdir build
+	rm -rf build/* ParserVal.java Yylex.java Parser.java
