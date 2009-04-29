@@ -132,27 +132,27 @@ public class TestMain {
 
 		//LIGHT WEIGHT SPACESHIP
 		popArgs = new Vector<Float>();
-		popArgs.add(new Float(20));
 		popArgs.add(new Float(25));
-		popArgs.add(new Float(20));
+		popArgs.add(new Float(25));
+		popArgs.add(new Float(25));
 		popArgs.add(new Float(27));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 		popArgs = new Vector<Float>();
-		popArgs.add(new Float(21));
+		popArgs.add(new Float(26));
 		popArgs.add(new Float(27));
-		popArgs.add(new Float(23));
+		popArgs.add(new Float(28));
 		popArgs.add(new Float(27));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(21));
+		popDot1.add(new Float(26));
 		popDot1.add(new Float(24));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(24));
+		popDot1.add(new Float(29));
 		popDot1.add(new Float(24));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(24));
+		popDot1.add(new Float(29));
 		popDot1.add(new Float(26));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
 
