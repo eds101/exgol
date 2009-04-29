@@ -97,6 +97,67 @@ public class Logic {
 		evenCells[x][y].state = s.populate.get(index).stateName;
 	}
 
+	void fillCircle(int index) {
+		String cell = s.populate.get(index).className;
+		String state = s.populate.get(index).stateName;
+		int x1,y1,r;
+		x1 = s.populate.get(index).populateArgs.get(0).intValue();
+		y1 = s.populate.get(index).populateArgs.get(1).intValue();
+		r = s.populate.get(index).populateArgs.get(2).intValue();
+		int x, y;
+		for (x=x1-r;x<=x1;x++) {
+			y=y1+r-x1+x;
+			evenCells[x][y].className = s.populate.get(index).className;
+			evenCells[x][y].state = s.populate.get(index).stateName;
+			y=y1-(r-x1+x);
+			evenCells[x][y].className = s.populate.get(index).className;
+			evenCells[x][y].state = s.populate.get(index).stateName;
+		}
+		for (x=x1+1;x<=x1+r;x++) {
+				y=y1+r-x+x1;
+				evenCells[x][y].className = s.populate.get(index).className;
+				evenCells[x][y].state = s.populate.get(index).stateName;
+				y=y1-(r-x+x1);
+				evenCells[x][y].className = s.populate.get(index).className;
+				evenCells[x][y].state = s.populate.get(index).stateName;
+		}
+	}
+
+	//TODO: stumped at first try
+	/*
+	void fillLine(int index) {
+			int x1,y1,x2,y2;
+			x1 = s.populate.get(index).populateArgs.get(0).intValue();
+			y1 = s.populate.get(index).populateArgs.get(1).intValue();
+			x2 = s.populate.get(index).populateArgs.get(2).intValue();
+			y2 = s.populate.get(index).populateArgs.get(3).intValue();
+
+			for(int i =0;i<
+
+			evenCells[x][y].className = s.populate.get(index).className;
+			evenCells[x][y].state = s.populate.get(index).stateName;
+	}*/
+
+
+	/*void fillUniform(int index) {
+			int x,y,d;
+			x = s.populate.get(index).populateArgs.get(0).intValue();
+			y = s.populate.get(index).populateArgs.get(1).intValue();
+			//P SHOULD BE BETWEEN ZERO AND ONE
+			p = s.populate.get(index).populateArgs.get(1).doubleValue();
+
+			for(int i =0;i<
+
+			evenCells[x][y].className = s.populate.get(index).className;
+			evenCells[x][y].state = s.populate.get(index).stateName;
+		}*/
+
+
+
+
+
+
+
 	Hashtable<String, Color> initColorMaps() {
 		s.classColors.put("EMPTY", Color.BLACK);
 		return s.classColors;
