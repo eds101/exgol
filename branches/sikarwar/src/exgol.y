@@ -72,73 +72,78 @@
 //exgol
 exgol		: init_section SEP NL trans_section SEP NL simulation_section{System.out.println("Exgol Parsed");};
 
-comment		: 
-
 //init
 init_section	: init_statements {System.out.println("Init Section Parsed");};
 
 init_statements	: 
-		grid_def 	init_statements|
-		gridtype_def 	init_statements|
-		class_def 	init_statements|
-		state_def 	init_statements|
-		alias_dec 	init_statements|
-		COMMENT		init_statements|
-		NL		init_statements|
+		grid_def NL init_statements|
+		gridtype_def NL init_statements|
+		class_def NL init_statements|
+		state_def NL init_statements|
+		alias_dec NL init_statements|
+		NL init_statements|
+		grid_def NL  |
+		gridtype_def NL  |
+		class_def NL  |
+		state_def NL  |
+		alias_dec NL  |
 		NL {System.out.println("Init Empty Line");};
 
-grid_def	: GRIDSIZE ASSIGN LBRACE dim_list RBRACE NL	{//System.out.println("Grid Generated");
+grid_def	: GRIDSIZE ASSIGN LBRACE dim_list RBRACE	{//System.out.println("Grid Generated");
 								};
 
-class_def	: CLASS ASSIGN LBRACE identifier_list RBRACE NL	{//System.out.println("List of Classes ");
+class_def	: CLASS	ASSIGN LBRACE identifier_list RBRACE	{//System.out.println("List of Classes ");
 								addClasses();//printIDList();
 								};
 
-state_def	: STATE ASSIGN LBRACE identifier_list RBRACE NL	{//System.out.println("List of States ");
+state_def	: STATE	ASSIGN LBRACE identifier_list RBRACE	{//System.out.println("List of States ");
 								addStates();//printIDList();
 								};
-gridtype_def	: GRIDTYPE ASSIGN BOUND NL 			{setGridType(1);}|
-		  GRIDTYPE ASSIGN WRAP NL 			{setGridType(2);};
-alias_dec	: ALIAS ID ASSIGN LBRACE identifier_list RBRACE NL {System.out.println("Alias " + $2.sval + " for " + $5.sval);};
+gridtype_def	: GRIDTYPE ASSIGN BOUND 			{setGridType(1);}|
+		  GRIDTYPE ASSIGN WRAP 			{setGridType(2);};
+alias_dec	: ALIAS ID ASSIGN LBRACE identifier_list RBRACE {System.out.println("Alias " + $2.sval + " for " + $5.sval);};
 
 //trans
 trans_section	: trans_statements {System.out.println("Trans Section Parsed");};
 
 trans_statements:
-		trans_def trans_statements 	{
-						//System.out.println("Transformation");
-						}|
-		transrule_def trans_statements {
-						//System.out.println("Trans Rule");
-						}|
-		COMMENT	      trans_statements |
-		NL		trans_statements |
-		NL 				{
-						//System.out.println("Trans Empty Line");
-						};
-
-trans_def	: TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID NL	{addTrans($9.sval,$2.sval);};
-transrule_def	: TRANSRULE ID LBRACE rule_expressions RBRACE NL 		{setRuleName($2.sval);addRule();};
-
-rule_expressions: 
-		type_def optional_expressions;
-type_def	:
-		WS TYPE ASSIGN ID NL {setRuleType($3.sval);};
-
-//eric here -- this is weird.. where shud line breaks be exactly
-optional_expressions:
-		rule_class	optional_expressions|
-		resolve		optional_expressions|
-		prob		optional_expressions|
-		condition	optional_expressions|
+		trans_def NL trans_statements |
+		transrule_def NL trans_statements |
+		transrule_def NL |
+		trans_def NL |
+		NL trans_statements |
 		NL;
 
-//eric here -- this is weird.. where shud line breaks be exactly
-resolve		: RESOLVE ASSIGN ID NL {System.out.println("resolve:" + $4.sval);};
-rule_class	: CLASS ASSIGN ID NL {System.out.println("class:" + $4.sval);};
-//eric here NUM| PROB -- hUH?
-prob		: PROB ASSIGN NUM | PROB ASSIGN NUM DOT NUM NL {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
-condition	: CONDITION ASSIGN  lhs compare rhs NL {setCondition($4.sval);};
+trans_def	: TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID	{addTrans($9.sval,$2.sval);};
+transrule_def	: TRANSRULE ID LBRACE rule_expressions RBRACE	{setRuleName($2.sval);addRule();};
+
+rule_expressions: 
+		type_def NL optional_expressions|
+		NL rule_expressions |
+		type_def nl_string|
+		type_def;
+		
+nl_string	: NL nl_string |
+		  NL;
+type_def	:
+		TYPE ASSIGN ID {setRuleType($3.sval);};
+
+optional_expressions:
+		rule_class NL optional_expressions|
+		resolve	 NL	optional_expressions|
+		prob NL	optional_expressions|
+		condition NL	optional_expressions|
+		NL		optional_expressions|
+		condition |
+		resolve |
+		prob |
+		rule_class |
+		NL;
+
+resolve		: RESOLVE ASSIGN ID {System.out.println("resolve:" + $3.sval);};
+rule_class	: CLASS ASSIGN ID {System.out.println("class:" + $3.sval);};
+prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
+condition	: CONDITION ASSIGN  lhs compare rhs {setCondition($4.sval);};
 lhs		: condition_stmt {setLHS();};
 rhs		: condition_stmt {setRHS();};
 
@@ -170,16 +175,18 @@ simulation_section:
 		simulation_stmts;
 
 simulation_stmts:
-		populate_stmt simulation_stmts|
-		sim_stmt simulation_stmts|
-		start_stmt simulation_stmts|
-		COMMENT	simulation_stmts|
+		populate_stmt NL simulation_stmts|
+		sim_stmt NL simulation_stmts|
+		start_stmt NL simulation_stmts|
 		NL simulation_stmts|
+		start_stmt|
+		sim_stmt|
+		populate_stmt|
 		NL;
 
 
 populate_stmt:
-	WS POPULATE LPARAN ID COM ID COM fill_func RPARAN NL{
+	POPULATE LPARAN ID COM ID COM fill_func RPARAN {
 							popSim($3.sval, $5.sval);
 							//System.out.println("Populate " + $3.sval + "," + $5.sval + "," + $7.sval);
 							};
@@ -188,22 +195,22 @@ populate_stmt:
 fill_func:
 	//DOTFUNC LBRACK NUM COM NUM RBRACK {System.out.println("Dot Function");}|
 	//RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {System.out.println("Rectangle Function");};
-	WS DOTFUNC LBRACK NUM COM NUM RBRACK {	
+	DOTFUNC LBRACK NUM COM NUM RBRACK {	
 						setPopType("dot");
 						popParams( new float[] {$3.ival, $5.ival});
 						//System.out.println("Dot Function");
 						}|
-	WS RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {
+	RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {
 						setPopType("rectangle");
 						popParams( new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
 						//System.out.println("Rectangle Function");
 						};
 
 sim_stmt:
-	WS SIM ID ASSIGN LBRACE identifier_list RBRACE NL {System.out.println("Sim Function");};
+	SIM ID ASSIGN LBRACE identifier_list RBRACE {System.out.println("Sim Function");};
 
 start_stmt:
-	 START LPARAN NUM COM ID RPARAN NL {System.out.println("Start Function");};
+	START LPARAN NUM COM ID RPARAN {System.out.println("Start Function");};
 
 
 //generic
@@ -215,9 +222,9 @@ dim_list	: NUM {addDim($1.ival);}|
 		  NUM COM dim_list {addDim($1.ival);};
 
 
-identifier_list : ID  				{addID($1.sval); } |
+identifier_list : ID 				{addID($1.sval); } |
 		  ID COM identifier_list 	{addID($1.sval); } |
-		  ID COL ID  		{addID($1.sval); addColor($1.sval, $3.sval);} |
+		  ID COL ID 			{addID($1.sval); addColor($1.sval, $3.sval);} |
 		  ID COL ID COM identifier_list {addID($1.sval); addColor($1.sval, $3.sval);};
 
 %%
