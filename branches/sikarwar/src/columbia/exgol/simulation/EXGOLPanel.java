@@ -38,8 +38,8 @@ public class EXGOLPanel extends JPanel {
 
 	public void start() {
 		cells = l.populate();
-		long delay = 1500;
-		long repeat = 250;
+		long delay = 1000;
+		long repeat = 150;
 
 		TimerTask generation = new TimerTask() {
 
