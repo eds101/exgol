@@ -1,0 +1,12 @@
+Change populate to include state populate(corn, healthy, poisson(.5))
+grammar
+dot -> point
+
+Reference Manual
+	- Lexical Conventions
+	- Compiler reference implementation
+
+
+For both docs
+	- Go through all text to make it consistent
+	- Possibly adjust number of pages
