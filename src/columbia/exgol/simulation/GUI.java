@@ -4,6 +4,9 @@
  */
 package columbia.exgol.simulation;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
@@ -15,11 +18,23 @@ public class GUI {
 	JFrame f;
 	EXGOLPanel p;
 	public static int SCALE = 5;
+    JButton next;
 
 	public GUI() {
 		f = new JFrame("EXGOL");
-		p = new EXGOLPanel(new Logic());
-		f.add(p);
+        f.setLayout(new BorderLayout());
+        p = new EXGOLPanel(new Logic());
+
+        next = new JButton("NEXT");
+        next.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent arg0) {
+                p.nextGen();
+            }
+        });
+
+		f.add(next, BorderLayout.NORTH);
+		f.add(p, BorderLayout.CENTER);
 	}
 
 	public void run() {

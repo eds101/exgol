@@ -1,6 +1,6 @@
 package columbia.exgol.intermediate;
 
-public class Condition {
+    public class Condition {
 
 	public CondExpr LHS;
 	public RelopType op;

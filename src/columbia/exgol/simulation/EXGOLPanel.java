@@ -36,10 +36,21 @@ public class EXGOLPanel extends JPanel {
 		stateComposites = l.initCompositeMap();
 	}
 
+    public void nextGen() {
+        synchronized (updateLock) {	//this method is not re-entrant
+					Object temp = l.getNextGen();
+					synchronized (lock) { //to avoid race with paintComponent
+						cells = (Cell[][]) temp;
+					}
+					repaint();
+				}
+    }
+
 	public void start() {
 		cells = l.populate();
-		long delay = 1500;
-		long repeat = 250;
+        /*
+		long delay = 1000;
+		long repeat = 5000;
 
 		TimerTask generation = new TimerTask() {
 
@@ -56,6 +67,7 @@ public class EXGOLPanel extends JPanel {
 
 		Timer t = new Timer();
 		t.scheduleAtFixedRate(generation, delay, repeat);
+         * */
 	}
 
 	@Override
@@ -70,9 +82,10 @@ public class EXGOLPanel extends JPanel {
 		synchronized (lock) {
 			for (y = 0; y < cells[0].length; y++) {
 				for (x = 0; x < cells.length; x++) {
-					g2d.setColor(classColors.get(cells[x][y].state));
+					g2d.setColor(classColors.get(cells[x][y].className));
 					g2d.setComposite(stateComposites.get(cells[x][y].state));
 					Rectangle r = new Rectangle(x * GUI.SCALE, y * GUI.SCALE, GUI.SCALE, GUI.SCALE);
+
 					g2d.fill(r);
 				}
 			}
