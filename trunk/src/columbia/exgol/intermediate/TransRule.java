@@ -1,6 +1,7 @@
 package columbia.exgol.intermediate;
 
 import columbia.exgol.simulation.Cell;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -43,31 +44,67 @@ public class TransRule {
 		}
 	}
 
-	public boolean checkCondition(Cell[][] oldCells, int x, int y, GridType gt) {
+	public Vector<String> checkCondition(Cell[][] oldCells, int x, int y, GridType gt) {
 		//TODO: handle WRAPPED grids
-		int lhsCount, rhsCount;
-
+		Integer lhsCount, rhsCount;
+        Vector<String> classes = new Vector<String>();
 		if (cond.alwaysTrue) {
-			return true;
+            classes.add("");
+			return classes;
 		}
 
-		lhsCount = cond.LHS.evaluate(oldCells, x, y, gt);
-		rhsCount = cond.RHS.evaluate(oldCells, x, y, gt);
+        Hashtable<String, Integer> lhs, rhs;
+		lhs = cond.LHS.evaluate(oldCells, x, y, gt);
+		rhs = cond.RHS.evaluate(oldCells, x, y, gt);
 
-		switch (cond.op) {
-			case GT:
-				return lhsCount > rhsCount;
-			case GET:
-				return lhsCount >= rhsCount;
-			case LT:
-				return lhsCount < rhsCount;
-			case LET:
-				return lhsCount <= rhsCount;
-			case EQ:
-				return lhsCount == rhsCount;
-			case NEQ:
-				return lhsCount != rhsCount;
-		}
-		return false;
+        classes.addAll(lhs.keySet());
+        for(String cl : rhs.keySet()){
+            if(!classes.contains(cl))
+                classes.add(cl);
+        }
+
+        classes.remove("EMPTY");
+        
+        for(int i = classes.size() - 1; i >= 0; i--){
+            String cl = classes.get(i);
+            boolean remove = false;
+            lhsCount = lhs.get("EMPTY") == null ? lhs.get(cl) : lhs.get("EMPTY");
+            rhsCount = rhs.get("EMPTY") == null ? rhs.get(cl) : rhs.get("EMPTY");
+            if(lhsCount == null || rhsCount == null)
+               remove = true;
+            else
+
+        
+            switch (cond.op) {
+                case GT:
+                    if (!(lhsCount > rhsCount))
+                        remove = true;
+                    break;
+                case GET:
+                    if (!(lhsCount >= rhsCount))
+                        remove = true;
+                    break;
+                case LT:
+                    if (!(lhsCount < rhsCount))
+                        remove = true;
+                    break;
+                case LET:
+                    if (!(lhsCount <= rhsCount))
+                        remove = true;
+                    break;
+                case EQ:
+                    if (!(lhsCount == rhsCount))
+                        remove = true;
+                    break;
+                case NEQ:
+                    if (!(lhsCount != rhsCount))
+                        remove = true;
+                    break;
+            }
+            if (remove) {
+                classes.remove(cl);
+            }
+        }
+        return classes;
 	}
 }

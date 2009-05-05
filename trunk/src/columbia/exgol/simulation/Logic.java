@@ -9,6 +9,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  *
@@ -48,20 +49,24 @@ public class Logic {
 					if (!tr.appliesToState(oldCells[x][y].state)) {
 						continue;
 					}
-					if (tr.checkCondition(oldCells, x, y, s.gridtype)) {
+                    Vector<String> classes = tr.checkCondition(oldCells, x, y, s.gridtype);
+					if (classes.size() > 0) {
 						newCells[x][y].state = tr.type.to;
 						if (tr.type.to.equals("EMPTY")) {
 							newCells[x][y].className = "EMPTY";
 						}
 						else {
-							//TODO: figure out the correct way
-							if (tr.classes.size() == 0) {
-								newCells[x][y].className = s.classes.get(0);
-							}
-							else {
-								newCells[x][y].className = tr.classes.get(0);
-							}
-						}
+                            if(classes.size() == 1)
+                                newCells[x][y].className = classes.get(0);
+                            else {
+                                for (String r: tr.resolve) {
+                                    if (classes.contains(r)) {
+                                        newCells[x][y].className = r;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 						break; //rule applied - go to next cell
 					}
 				}

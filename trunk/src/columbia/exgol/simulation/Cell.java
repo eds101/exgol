@@ -38,21 +38,11 @@ public class Cell {
 
 	public boolean isEnemy(Cell c) {
 		//if we are both empty, its not a match
-		if (className.equals("EMPTY") && c.className.equals("EMPTY")) {
-			return false;
-		}
-		//ERIC is this true for enemy?  should it even be true for peer?
-		//if he is empty, but i am not, an enemy is found
-		if (!className.equals("EMPTY") && c.className.equals("EMPTY")) {
+		if (className.equals("EMPTY")){// && c.className.equals("EMPTY")) {
 			return false;
 		}
 		//else we both gotta be different classes
-		if (!className.equals(c.className)) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return !className.equals(c.className);
 	}
 
 	//ERIC is this right?

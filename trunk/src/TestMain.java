@@ -27,9 +27,11 @@ public class TestMain {
 
 		s.classes = new Vector<String>();
 		s.classes.add("CELL");
+        s.classes.add("KNIGHT");
 
 		s.classColors = new Hashtable<String, Color>();
 		s.classColors.put("CELL", Color.BLACK);
+        s.classColors.put("KNIGHT", Color.RED);
 
 		s.states = new Vector<String>();
 		s.states.add("ALIVE");
@@ -40,6 +42,7 @@ public class TestMain {
 		Trans die = new Trans();
 		die.from = new Vector<String>();
 		die.from.add("ALIVE");
+        die.from.add("INJURED");
 		die.to = "EMPTY";
 		die.name = "DIE";
 
@@ -58,15 +61,22 @@ public class TestMain {
 
 		TransRule birth = new TransRule("BIRTH");
 		birth.type = breed;
+        birth.resolve.add("KNIGHT");
 		LHS = new CondExpr(CondExpr.PEER, "EMPTY", prox);
 		RHS = new CondExpr(3);
 		birth.cond = new Condition(LHS, RelopType.EQ, RHS);
 
 		TransRule death = new TransRule("DEATH");
 		death.type = die;
-		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
+		LHS = new CondExpr(CondExpr.PEER, "", prox);
 		RHS = new CondExpr(2);
 		death.cond = new Condition(LHS, RelopType.LT, RHS);
+
+        TransRule fight = new TransRule("FIGHT");
+		fight.type = die;
+		LHS = new CondExpr(CondExpr.ENEMY, "ALIVE", prox);
+		RHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
+		fight.cond = new Condition(LHS, RelopType.GET, RHS);
 
 		TransRule crowded = new TransRule("OVERPOPULATION");
 		crowded.type = die;
@@ -76,7 +86,8 @@ public class TestMain {
 
 
 		s.transrule = new Vector<TransRule>();
-		s.transrule.add(death);
+        s.transrule.add(fight);
+        s.transrule.add(death);
 		s.transrule.add(crowded);
 		s.transrule.add(birth);
 
@@ -89,6 +100,27 @@ public class TestMain {
 		Vector<Float> popDot1;
 		Vector<Float> popDot2;
 		s.populate = new Vector<Populate>();
+
+        int x, y;
+        //2 DOTS
+        x = 1;
+        y = 1;
+
+
+        //BLINKER below dots
+        popArgs = new Vector<Float>();
+		popArgs.add(new Float(x));
+		popArgs.add(new Float(y));
+		popArgs.add(new Float(x+1));
+		popArgs.add(new Float(y+1));
+		s.populate.add(new Populate("CELL", "INJURED", PopulateType.RECTANGLE, popArgs));
+
+         popArgs = new Vector<Float>();
+		popArgs.add(new Float(x+2));
+		popArgs.add(new Float(y));
+		popArgs.add(new Float(x+3));
+		popArgs.add(new Float(y+1));
+		s.populate.add(new Populate("KNIGHT", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
 		//GLIDER 1
 		popArgs = new Vector<Float>();
@@ -116,45 +148,57 @@ public class TestMain {
 		popArgs.add(new Float(5));
 		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
+        //BLINKER
+		popArgs = new Vector<Float>();
+		popArgs.add(new Float(15));
+		popArgs.add(new Float(7));
+		popArgs.add(new Float(17));
+		popArgs.add(new Float(7));
+		s.populate.add(new Populate("KNIGHT", "ALIVE", PopulateType.RECTANGLE, popArgs));
+
 		//TOAD
 		popArgs = new Vector<Float>();
 		popArgs.add(new Float(5));
 		popArgs.add(new Float(15));
 		popArgs.add(new Float(7));
 		popArgs.add(new Float(15));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		s.populate.add(new Populate("KNIGHT", "ALIVE", PopulateType.RECTANGLE, popArgs));
 		popArgs = new Vector<Float>();
 		popArgs.add(new Float(4));
 		popArgs.add(new Float(16));
 		popArgs.add(new Float(6));
 		popArgs.add(new Float(16));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		s.populate.add(new Populate("KNIGHT", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
 		//LIGHT WEIGHT SPACESHIP
+        
 		popArgs = new Vector<Float>();
-		popArgs.add(new Float(35));
-		popArgs.add(new Float(35));
-		popArgs.add(new Float(35));
-		popArgs.add(new Float(37));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+        x = 20;
+        y = 20;
+        String spaceship = "CELL";
+		popArgs.add(new Float(x));
+		popArgs.add(new Float(y));
+		popArgs.add(new Float(x));
+		popArgs.add(new Float(y+2));
+		s.populate.add(new Populate(spaceship, "ALIVE", PopulateType.RECTANGLE, popArgs));
 		popArgs = new Vector<Float>();
-		popArgs.add(new Float(36));
-		popArgs.add(new Float(37));
-		popArgs.add(new Float(38));
-		popArgs.add(new Float(37));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+		popArgs.add(new Float(x+1));
+		popArgs.add(new Float(y+2));
+		popArgs.add(new Float(x+3));
+		popArgs.add(new Float(y+2));
+		s.populate.add(new Populate(spaceship, "ALIVE", PopulateType.RECTANGLE, popArgs));
 		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(36));
-		popDot1.add(new Float(34));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1.add(new Float(x+1));
+		popDot1.add(new Float(y-1));
+		s.populate.add(new Populate(spaceship, "ALIVE", PopulateType.DOT, popDot1));
 		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(39));
-		popDot1.add(new Float(34));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1.add(new Float(x+4));
+		popDot1.add(new Float(y-1));
+		s.populate.add(new Populate(spaceship, "ALIVE", PopulateType.DOT, popDot1));
 		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(39));
-		popDot1.add(new Float(36));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
+		popDot1.add(new Float(x+4));
+		popDot1.add(new Float(y+1));
+		s.populate.add(new Populate(spaceship, "ALIVE", PopulateType.DOT, popDot1));
 
 		//Breeder
 		popArgs = new Vector<Float>();
