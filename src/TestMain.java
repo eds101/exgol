@@ -121,8 +121,10 @@ public class TestMain {
 		s.populate.add(new Populate("KNIGHT", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
 		//GLIDER 1
-        glider(s, "CELL", "ALIVE", 20, 70);
-        glider(s, "KNIGHT", "INJURED", 40, 70);
+        glider(s, "CELL", "ALIVE", 10, 70);
+        glider(s, "KNIGHT", "ALIVE", 30, 70);
+        glider(s, "CELL", "INJURED", 50, 70);
+        glider(s, "KNIGHT", "INJURED", 70, 70);
 
         //BLINKER
 		popArgs = new Vector<Float>();
