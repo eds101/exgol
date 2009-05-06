@@ -21,7 +21,7 @@ public class TestMain {
 
 		s.gridsize = new Vector<Integer>();
 		s.gridsize.add(100);
-		s.gridsize.add(50);
+		s.gridsize.add(100);
 
 		s.gridtype = GridType.BOUNDED;
 
@@ -59,37 +59,35 @@ public class TestMain {
 		prox.add(1);
 		CondExpr LHS, RHS;
 
+        s.transrule = new Vector<TransRule>();
 		TransRule birth = new TransRule("BIRTH");
 		birth.type = breed;
         birth.resolve.add("KNIGHT");
-		LHS = new CondExpr(CondExpr.PEER, "EMPTY", prox);
+		LHS = new CondExpr(CondExpr.PEER, "", prox);
 		RHS = new CondExpr(3);
 		birth.cond = new Condition(LHS, RelopType.EQ, RHS);
+        s.transrule.add(birth);
 
 		TransRule death = new TransRule("DEATH");
 		death.type = die;
 		LHS = new CondExpr(CondExpr.PEER, "", prox);
 		RHS = new CondExpr(2);
 		death.cond = new Condition(LHS, RelopType.LT, RHS);
+        s.transrule.add(death);
 
-        TransRule fight = new TransRule("FIGHT");
-		fight.type = die;
-		LHS = new CondExpr(CondExpr.ENEMY, "ALIVE", prox);
-		RHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
-		fight.cond = new Condition(LHS, RelopType.GET, RHS);
+//      TransRule fight = new TransRule("FIGHT");
+//		fight.type = die;
+//		LHS = new CondExpr(CondExpr.ENEMY, "ALIVE", prox);
+//		RHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
+//		fight.cond = new Condition(LHS, RelopType.GET, RHS);
+//      s.transrule.add(fight);
 
 		TransRule crowded = new TransRule("OVERPOPULATION");
 		crowded.type = die;
 		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
 		RHS = new CondExpr(3);
 		crowded.cond = new Condition(LHS, RelopType.GT, RHS);
-
-
-		s.transrule = new Vector<TransRule>();
-        s.transrule.add(fight);
-        s.transrule.add(death);
 		s.transrule.add(crowded);
-		s.transrule.add(birth);
 
 		s.simrules = new Vector<TransRule>();
 		s.simrules.add(birth);
@@ -123,24 +121,10 @@ public class TestMain {
 		s.populate.add(new Populate("KNIGHT", "ALIVE", PopulateType.RECTANGLE, popArgs));
 
 		//GLIDER 1
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(19));
-		popArgs.add(new Float(17));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
+        glider(s, "CELL", "ALIVE", 17, 17);
+        glider(s, "KNIGHT", "INJURED", 40, 70);
 
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(17));
-		popDot1.add(new Float(18));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-
-		popDot2 = new Vector<Float>();
-		popDot2.add(new Float(18));
-		popDot2.add(new Float(19));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
-
-		//BLINKER
+        //BLINKER
 		popArgs = new Vector<Float>();
 		popArgs.add(new Float(15));
 		popArgs.add(new Float(5));
@@ -291,4 +275,27 @@ public class TestMain {
 		GUI gui = new GUI();
 		gui.run();
 	}
+
+    static void glider(Simulation s, String type, String state, int x, int y) {
+        Vector<Float> popArgs;
+		Vector<Float> popDot1;
+		Vector<Float> popDot2;
+
+        popArgs = new Vector<Float>();
+		popArgs.add(new Float(x));
+		popArgs.add(new Float(y));
+		popArgs.add(new Float(x+2));
+		popArgs.add(new Float(y));
+		s.populate.add(new Populate(type, state, PopulateType.RECTANGLE, popArgs));
+
+		popDot1 = new Vector<Float>();
+		popDot1.add(new Float(x));
+		popDot1.add(new Float(y+1));
+		s.populate.add(new Populate(type, state, PopulateType.DOT, popDot1));
+
+		popDot2 = new Vector<Float>();
+		popDot2.add(new Float(x+1));
+		popDot2.add(new Float(y+2));
+		s.populate.add(new Populate(type, state, PopulateType.DOT, popDot2));
+    }
 }
