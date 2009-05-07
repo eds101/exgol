@@ -59,6 +59,7 @@ public class EXGOLPanel extends JPanel {
                         synchronized (lock) { //to avoid race with paintComponent
                             cells = (Cell[][]) temp;
                             if (pauseFlag) {
+                                pauseFlag = false;
                                 return;
                             }
                         }
