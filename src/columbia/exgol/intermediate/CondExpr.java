@@ -49,7 +49,7 @@ public class CondExpr {
         }
     }
 
-    Hashtable evaluate(Cell[][] cells, int x, int y, GridType gt) {
+    Hashtable<String, Integer> evaluate(Cell[][] cells, int x, int y, GridType gt) {
         Hashtable<String, Integer> retVal = new Hashtable<String, Integer>();
         if (isNum) {
             retVal.put("EMPTY", value);
