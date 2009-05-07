@@ -80,7 +80,9 @@ public class EXGOLPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(s.gridsize.get(0) * GUI.SCALE, s.gridsize.get(1) * GUI.SCALE);
+        return new Dimension(
+                s.gridsize.get(0) * GUI.SCALE,
+                s.gridsize.get(1) * GUI.SCALE);
     }
 
 
@@ -98,7 +100,8 @@ public class EXGOLPanel extends JPanel {
                 for (x = 0; x < cells.length; x++) {
                     g2d.setColor(classColors.get(cells[x][y].className));
                     g2d.setComposite(stateComposites.get(cells[x][y].state));
-                    Rectangle r = new Rectangle(x * GUI.SCALE, y * GUI.SCALE, GUI.SCALE, GUI.SCALE);
+                    Rectangle r =
+                            new Rectangle(x * GUI.SCALE, y * GUI.SCALE, GUI.SCALE, GUI.SCALE);
                     g2d.fill(r);
                 }
             }
