@@ -1,28 +1,45 @@
 gridsize:={50,100}
-class:={CELL:black}
+class:={KNIGHT:orange,DRAGON:blue}
 state:={ALIVE,INJURED}
 gridtype:=bounded
-
 %%
+trans DIE:={ALIVE,INJURED}->EMPTY
 trans BREED:={EMPTY}->ALIVE
-trans DIE:={ALIVE}->EMPTY
-transrule BIRTH	 { type:=BREED
-condition:=peer[1]=3
+trans BREEDINJ:={EMPTY}->INJURED
 
-}
-transrule DEATH	 { type:=DIE
-condition:=peer.ALIVE[1]<2
+transrule BIRTH	 { 
+	type:=BREED
+	condition:=peer.ALIVE[1]=3
+	prob:=0.1}
 
-}
-transrule OVERPOPULATION { type:=DIE
-condition:=peer.ALIVE[1]>3
+transrule DEATH	 { 
+	type:=DIE
+	condition:=peer[1]<2}
 
-}
+transrule BIRTHINJ { 
+	type:=BREEDINJ
+	condition:=peer.INJURED[1]=3}
+
+transrule OVERPOPULATION { 
+	type:=DIE
+	condition:=peer[1]>3}
 
 %%
-populate(CELL, ALIVE, dot[17,18])
-populate(CELL, ALIVE, dot[18,19])
-populate(CELL, ALIVE, rectangle[17,17,19,17])
+populate(DRAGON, ALIVE, glider[15,45,NW])
+populate(DRAGON, ALIVE, blinker[1,1,h])
+populate(KNIGHT, INJURED, blinker [10,10,v])
+populate(DRAGON, ALIVE, dot[17,18])
+populate(DRAGON, ALIVE, dot[18,19])
+populate(DRAGON, ALIVE, rectangle[17,17,19,17])
+populate(KNIGHT, ALIVE, dot[27,28])
+populate(KNIGHT, ALIVE, dot[28,29]) 
+populate(KNIGHT, ALIVE, rectangle[27,27,29,27])
+populate(DRAGON, INJURED, dot[37,38])
+populate(DRAGON, INJURED, dot[38,39])
+populate(DRAGON, INJURED, rectangle[37,37,39,37])
+populate(KNIGHT, INJURED, dot[47,48])
+populate(KNIGHT, INJURED, dot[48,49]) 
+populate(KNIGHT, INJURED, rectangle[47,47,49,47])
 sim gol:={BREED,DEATH,OVERPOPULATION}
 start(0,gol)
 
