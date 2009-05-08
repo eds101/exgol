@@ -40,6 +40,8 @@ POPULATE	= "populate"
 
 DOTFUNC		= "dot"
 RECTFUNC	= "rectangle"
+BLINKER		= "blinker"
+GLIDER		= "glider"
 
 //assignment operators
 ASSIGN 		= ":="
@@ -94,7 +96,8 @@ LT		= "<"
 
 {DOTFUNC}		{return Parser.DOTFUNC;}
 {RECTFUNC}		{return Parser.RECTFUNC;}
-
+{BLINKER}		{return Parser.BLINKER;}
+{GLIDER}		{return Parser.GLIDER;}
 //{COLOR}			{ yyparser.yylval = new ParserVal(yytext());return Parser.COLOR;}
 
 {ASSIGN}		{return Parser.ASSIGN;}

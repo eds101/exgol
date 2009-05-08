@@ -36,7 +36,7 @@ public class CondExpr {
     }
 
     private boolean performEval(Cell kernel, Cell cell) {
-        if(!condState.equals(cell.state) && !condState.equals(""))
+        if(!condState.equals(cell.state) && !condState.equals("*"))
             return false;
         if (condClass.equals(PEER)) {
             return cell.isPeer(kernel);

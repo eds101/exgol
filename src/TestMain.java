@@ -52,8 +52,15 @@ public class TestMain {
 		breed.to = "ALIVE";
 		breed.name = "BIRTH";
 
+        Trans breed_inj = new Trans();
+		breed_inj.from = new Vector<String>();
+		breed_inj.from.add("EMPTY");
+		breed_inj.to = "INJURED";
+		breed_inj.name = "BIRTH_INJ";
+
 		s.trans.add(die);
 		s.trans.add(breed);
+        s.trans.add(breed_inj);
 
 		Vector<Integer> prox = new Vector<Integer>(); //proximity
 		prox.add(1);
@@ -63,10 +70,18 @@ public class TestMain {
 		TransRule birth = new TransRule("BIRTH");
 		birth.type = breed;
         birth.resolve.add("KNIGHT");
-		LHS = new CondExpr(CondExpr.PEER, "", prox);
+		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
 		RHS = new CondExpr(3);
 		birth.cond = new Condition(LHS, RelopType.EQ, RHS);
         s.transrule.add(birth);
+        
+		TransRule birth_inj = new TransRule("BIRTH_INJ");
+		birth_inj.type = breed_inj;
+        birth_inj.resolve.add("KNIGHT");
+		LHS = new CondExpr(CondExpr.PEER, "INJURED", prox);
+		RHS = new CondExpr(3);
+		birth_inj.cond = new Condition(LHS, RelopType.EQ, RHS);
+        s.transrule.add(birth_inj);
 
 		TransRule death = new TransRule("DEATH");
 		death.type = die;
@@ -84,7 +99,7 @@ public class TestMain {
 
 		TransRule crowded = new TransRule("OVERPOPULATION");
 		crowded.type = die;
-		LHS = new CondExpr(CondExpr.PEER, "ALIVE", prox);
+		LHS = new CondExpr(CondExpr.PEER, "", prox);
 		RHS = new CondExpr(3);
 		crowded.cond = new Condition(LHS, RelopType.GT, RHS);
 		s.transrule.add(crowded);

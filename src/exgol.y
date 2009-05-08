@@ -35,7 +35,8 @@
 
 %token DOTFUNC
 %token RECTFUNC
-
+%token BLINKER
+%token GLIDER
 
 %token ASSIGN
 %token LBRACE
@@ -142,13 +143,13 @@ optional_expressions:
 
 resolve		: RESOLVE ASSIGN ID {System.out.println("resolve:" + $3.sval);};
 rule_class	: CLASS ASSIGN ID {System.out.println("class:" + $3.sval);};
-prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
+prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM {setProb($3.ival*10 +$5.ival*0.1);}
 condition	: CONDITION ASSIGN  lhs compare rhs {setCondition($4.sval);};
 lhs		: condition_stmt {setLHS();};
 rhs		: condition_stmt {setRHS();};
 
-condition_stmt	: ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"EMPTY");}|
-		  builtin_alias LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"EMPTY");}|
+condition_stmt	: ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"*");}|
+		  builtin_alias LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"*");}|
 		  builtin_alias DOT ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval, $3.sval);}|
 		  NUM {setConditionExpr($1.ival);};
 
@@ -204,7 +205,36 @@ fill_func:
 						setPopType("rectangle");
 						popParams( new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
 						//System.out.println("Rectangle Function");
-						};
+						}|
+	BLINKER LBRACK NUM COM NUM COM ID RBRACK {
+						setPopType("rectangle");
+						if($7.sval.equalsIgnoreCase("h"))
+							popParams( new float[] {$3.ival, $5.ival, $3.ival+2, $5.ival});
+						else if($7.sval.equalsIgnoreCase("v"))
+							popParams( new float[] {$3.ival, $5.ival, $3.ival, $5.ival+2});
+						else
+							yyerror("Incorrect blinker type");
+						}|
+	GLIDER LBRACK NUM COM NUM COM ID RBRACK {
+					if($7.sval.equalsIgnoreCase("NW")){
+						setPopType("rectangle");
+						popParams( new float[] {$3.ival, $5.ival, $3.ival+2, $5.ival});
+						setPopType("rectangle");
+						popParams( new float[] {$3.ival, $5.ival+1, $3.ival, $5.ival+1});
+						setPopType("rectangle");
+						popParams( new float[] {$3.ival+1, $5.ival+2, $3.ival+1, $5.ival+2});
+					}
+					else if($7.sval.equalsIgnoreCase("NE"))
+						popParams( new float[] {$3.ival, $5.ival, $3.ival, $5.ival+2});
+					
+					else if($7.sval.equalsIgnoreCase("SE"))
+							;
+					else if($7.sval.equalsIgnoreCase("SW"))
+					;
+					else
+						yyerror("Incorrect glider type");
+					};
+
 
 sim_stmt:
 	SIM ID ASSIGN LBRACE identifier_list RBRACE {System.out.println("Sim Function");};
@@ -239,7 +269,7 @@ Vector<Integer> prox = new Vector<Integer>(); //proximity
 Vector<String> idList = new Vector<String>();
 static Vector<Float> popArgs = new Vector<Float>();
 
-TransRule trRule = new TransRule("Deafult");
+TransRule trRule = new TransRule("Default");
 CondExpr cond;
 CondExpr LHS, RHS;
 
@@ -263,6 +293,7 @@ private int yylex () {
 /* error reporting */
 public void yyerror (String error) {
   System.err.println ("Error: " + error);
+  System.exit(1);
 }
 
 /* lexer is created in the constructor */
@@ -272,7 +303,20 @@ public Parser(Reader r) {
 
 
 private void addColor(String cls, String clr){
-  s.classColors.put(cls, Color.BLACK);
+  	if(clr.equalsIgnoreCase("red"))
+		s.classColors.put(cls, Color.RED);
+	if(clr.equalsIgnoreCase("black"))
+	        s.classColors.put(cls, Color.BLACK);
+	if(clr.equalsIgnoreCase("blue"))
+		s.classColors.put(cls, Color.BLUE);
+	if(clr.equalsIgnoreCase("green"))
+	        s.classColors.put(cls, Color.GREEN);
+	if(clr.equalsIgnoreCase("orange"))
+	        s.classColors.put(cls, Color.ORANGE);
+        if(clr.equalsIgnoreCase("yellow"))
+		s.classColors.put(cls, Color.YELLOW);
+	if(clr.equalsIgnoreCase("white"))
+	        s.classColors.put(cls, Color.WHITE);
 }
 
 private void addDim(int x){
@@ -280,7 +324,7 @@ private void addDim(int x){
 }
 
 private void addID(String i){
-	//System.out.println(i);
+	System.out.println("adding " + i);
 	idList.add(i);
 }
 private void setGridType(int m){
@@ -311,11 +355,12 @@ private void addClasses(){
 }
 
 private void addStates(){
-	for (Enumeration e = idList.elements(); e.hasMoreElements();)
-		{
-			String ID = (String) e.nextElement();
-			s.states.add(ID);
-		}
+	for(int i=idList.size()-1;i>=0;i--)
+	{
+		String ID = (String) idList.get(i);
+		System.out.println("adding state: " + ID);
+		s.states.add(ID);
+	}
 	idList.clear();
 }
 
@@ -342,6 +387,10 @@ private void setConditionExpr(int n){
 private void setConditionExpr(String condClass, String condState){
 	System.out.println(condClass + " - " + condState); 
 	cond = new CondExpr(condClass, condState, prox);
+}
+
+private void setProb(double prob){
+	trRule.prob = (float)prob;
 }
 
 private void setLHS(){
@@ -413,7 +462,7 @@ private void addRule(){
 	}
 */	
 	s.transrule.add(trRule);
-	trRule = new TransRule("Deafult");
+	trRule = new TransRule("Default");
 }
 
 private void popParams(float[] params){
@@ -440,75 +489,40 @@ private void popSim(String sClass, String sState){
 }
 
 public static void main(String args[]) throws IOException {
+	try {
+		UIManager.setLookAndFeel(
+			UIManager.getSystemLookAndFeelClassName());
+	} catch (Exception e) {}
+	s = Simulation.createSimulation();
+	s.generations = 0;
 
-		s = Simulation.createSimulation();
-		s.generations = 0;
+	s.gridsize = new Vector<Integer>();
+	s.classColors = new Hashtable<String, Color>();	
+	s.classes = new Vector<String>();
+	s.states = new Vector<String>();
+	s.trans = new Vector<Trans>();
+	s.transrule = new Vector<TransRule>();
+	s.simrules = new Vector<TransRule>();
+	s.populate = new Vector<Populate>();
+	
 
-		s.gridsize = new Vector<Integer>();
-		s.classColors = new Hashtable<String, Color>();	
-		s.classes = new Vector<String>();
-		s.states = new Vector<String>();
-		s.trans = new Vector<Trans>();
-		s.transrule = new Vector<TransRule>();
-		s.simrules = new Vector<TransRule>();
-		s.populate = new Vector<Populate>();
-		
-
-	  	Parser yyparser = new Parser(new FileReader(args[0]));
-	 	yyparser.yyparse();
-/**/
-		for (Enumeration e = s.transrule.elements(); e.hasMoreElements();)
-		{		
+	Parser yyparser = new Parser(new FileReader(args[0]));
+	yyparser.yyparse();
+	for (Enumeration e = s.transrule.elements(); e.hasMoreElements();)
+	{		
 		TransRule tr = (TransRule) e.nextElement();
 		s.simrules.add(tr);
-//		System.out.println(tr.name + ";" + tr.type.name);
-		}
+	}
 
-		for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
-		{		
+	for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
+	{		
 		Populate p = (Populate) e.nextElement();
-		System.out.println(p.className + " - " + p.stateName + " - " + p.populateType);
-
-
-			for (Enumeration e2 = p.populateArgs.elements(); e2.hasMoreElements();)
-			{		
-				Float r = (Float) e2.nextElement();
-				System.out.println(r);
-			}
-
+		for (Enumeration e2 = p.populateArgs.elements(); e2.hasMoreElements();)
+		{		
+			Float r = (Float) e2.nextElement();
+			System.out.println(r);
 		}
-		//s.simrules.add(birth);
-		//s.simrules.add(death);
-		//s.simrules.add(crowded);
-		
-		/*
-		Vector<Float> popDot1;
-		Vector<Float> popDot2;
-
-
-		//GLIDER 1
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(19));
-		popArgs.add(new Float(17));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(17));
-		popDot1.add(new Float(18));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-
-		popDot2 = new Vector<Float>();
-		popDot2.add(new Float(18));
-		popDot2.add(new Float(19));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
-*/
-
-		GUI gui = new GUI();
-		gui.run();
-
-
-
-
+	}
+	GUI gui = new GUI();
+	gui.run();
 }
