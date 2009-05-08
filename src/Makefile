@@ -4,10 +4,6 @@ all:
 	javac -d build Parser.java
 	cp grid.exgol build; cd build; java Parser grid.exgol; rm grid.exgol
 
-run:
-	cp grid.exgol build; cd build; java Parser grid.exgol; rm grid.exgol
-	cp testmain.exgol build; cd build; java Parser testmain.exgol; rm testmain.exgol
-
 test:
 	javac -d build TestMain.java
 	cd build; java TestMain

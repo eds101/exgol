@@ -124,4 +124,4 @@ LT		= "<"
 {NL}			{return Parser.NL;}
 {WS}			{}
 {SEP}			{return Parser.SEP;}
-<<EOF>>			{return Parser.EOF;}
+//<<EOF>>			{return Parser.EOF;}
