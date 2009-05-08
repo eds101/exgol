@@ -67,7 +67,7 @@
 
 %%
 
-exgol			:	init_section SEP NL trans_section SEP NL simulation_section
+exgol			:	init_section SEP trans_section SEP simulation_section
 					{ System.out.println("Exgol Parsed"); }
 				;
 
@@ -81,12 +81,7 @@ init_statements	:	grid_def NL init_statements
 				|	state_def NL init_statements
 				|	alias_dec NL init_statements
 				|	NL init_statements
-				|	grid_def NL  
-				|	gridtype_def NL  
-				|	class_def NL  
-				|	state_def NL  
-				|	alias_dec NL  
-				|	NL 
+				|
 				;
 
 grid_def		:	GRIDSIZE ASSIGN LBRACE dim_list RBRACE	
@@ -114,9 +109,6 @@ gridtype_def	: 	GRIDTYPE ASSIGN BOUND 			{setGridType(1);}
 				;
 
 alias_dec		: 	ALIAS ID ASSIGN LBRACE identifier_list RBRACE 
-					{ 
-						System.out.println("Alias " + $2.sval + " for " + $5.sval);
-			  		}
 				;
 
 
@@ -127,6 +119,7 @@ trans_section	:	trans_statements
 
 trans_statements:	trans_def NL trans_statements 
 				|	transrule_def NL trans_statements 
+				|	NL trans_statements
 				|
 				;
 
@@ -139,6 +132,7 @@ transrule_def	:	TRANSRULE ID LBRACE rule_expressions RBRACE
 				;
 
 rule_expressions:	type_def NL optional_expressions
+				|	NL type_def NL optional_expressions
 				;
 		
 type_def		: 	TYPE ASSIGN ID {setRuleType($3.sval);};
@@ -196,12 +190,13 @@ compare			: 	EQ {$$.sval = "EQ";}
 				|	NOT EQ {$$.sval = "NEQ";}
 				;
 			
-simulation_section	:	simulation_stmts 
+simulation_section	:	simulation_stmts
 					;
 
 simulation_stmts:	populate_stmt NL simulation_stmts
 				|	sim_stmt NL simulation_stmts
 				|	start_stmt NL simulation_stmts
+				|	NL simulation_stmts
 				|
 				;
 
@@ -228,7 +223,7 @@ fill_func		:	DOTFUNC LBRACK NUM COM NUM RBRACK
 						else if ($7.sval.equalsIgnoreCase("v")) 
 							bAlign = Blinker.VERTICAL;
 						else
-							yyerror("Incorrect blinker type");
+							yyerror("Incorrect blinker align");
 						setPopType(PopulateType.BLINKER);
 						popParams(new float[] {$3.ival, $5.ival, bAlign});
 					}
@@ -245,7 +240,7 @@ fill_func		:	DOTFUNC LBRACK NUM COM NUM RBRACK
 						else if(dir.equalsIgnoreCase("SE"))
 							bDir = Glider.SE;
 						else
-							yyerror("Incorrect glider dir");
+							yyerror("Incorrect glider direction");
 						
 						setPopType(PopulateType.GLIDER);
 						popParams(
