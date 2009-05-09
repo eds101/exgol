@@ -48,7 +48,9 @@ public class TransRule {
 		//TODO: handle WRAPPED grids
 		Integer lhsCount, rhsCount;
         Vector<String> classes = new Vector<String>();
-		if (cond.alwaysTrue) {
+		if(1.0-this.prob > Math.random())
+            return classes;
+        if (cond.alwaysTrue) {
             classes.add("");
 			return classes;
 		}

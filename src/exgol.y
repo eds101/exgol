@@ -10,8 +10,6 @@
 	import java.util.Enumeration;
 %}
 
-/* YACC Declarations */
-
 %token GRIDSIZE
 %token CLASS
 %token STATE
@@ -35,7 +33,8 @@
 
 %token DOTFUNC
 %token RECTFUNC
-
+%token BLINKER
+%token GLIDER
 
 %token ASSIGN
 %token LBRACE
@@ -63,188 +62,222 @@
 %token NL
 %token WS
 %token EOF
-//%token COLOR
 
+%start exgol
 
-/* Grammar follows */
 %%
 
-//exgol
-exgol		: init_section SEP NL trans_section SEP NL simulation_section{System.out.println("Exgol Parsed");};
+exgol			:	init_section SEP trans_section SEP simulation_section
+					{ System.out.println("Exgol Parsed"); }
+				;
 
-//init
-init_section	: init_statements {System.out.println("Init Section Parsed");};
+init_section	:	init_statements 
+					{ System.out.println("Init Section Parsed"); }
+				;
 
-init_statements	: 
-		grid_def NL init_statements|
-		gridtype_def NL init_statements|
-		class_def NL init_statements|
-		state_def NL init_statements|
-		alias_dec NL init_statements|
-		NL init_statements|
-		grid_def NL  |
-		gridtype_def NL  |
-		class_def NL  |
-		state_def NL  |
-		alias_dec NL  |
-		NL {System.out.println("Init Empty Line");};
+init_statements	:	grid_def NL init_statements
+				|	gridtype_def NL init_statements
+				|	class_def NL init_statements
+				|	state_def NL init_statements
+				|	alias_dec NL init_statements
+				|	NL init_statements
+				|
+				;
 
-grid_def	: GRIDSIZE ASSIGN LBRACE dim_list RBRACE	{//System.out.println("Grid Generated");
-								};
+grid_def		:	GRIDSIZE ASSIGN LBRACE dim_list RBRACE	
+					{ /*System.out.println("Grid Generated");*/ }
+				;
 
-class_def	: CLASS	ASSIGN LBRACE identifier_list RBRACE	{//System.out.println("List of Classes ");
-								addClasses();//printIDList();
-								};
+class_def		:	CLASS ASSIGN LBRACE identifier_list RBRACE	
+					{ 
+						//System.out.println("List of Classes ");
+						addClasses();
+						//printIDList();
+				  	}
+				;
 
-state_def	: STATE	ASSIGN LBRACE identifier_list RBRACE	{//System.out.println("List of States ");
-								addStates();//printIDList();
-								};
-gridtype_def	: GRIDTYPE ASSIGN BOUND 			{setGridType(1);}|
-		  GRIDTYPE ASSIGN WRAP 			{setGridType(2);};
-alias_dec	: ALIAS ID ASSIGN LBRACE identifier_list RBRACE {System.out.println("Alias " + $2.sval + " for " + $5.sval);};
+state_def		:	STATE ASSIGN LBRACE identifier_list RBRACE	
+					{
+					  	//System.out.println("List of States ");
+						addStates();
+						//printIDList(); 
+			  		}
+				;
 
-//trans
-trans_section	: trans_statements {System.out.println("Trans Section Parsed");};
+gridtype_def	: 	GRIDTYPE ASSIGN BOUND 			{setGridType(1);}
+				| 	GRIDTYPE ASSIGN WRAP 			{setGridType(2);}
+				;
 
-trans_statements:
-		trans_def NL trans_statements |
-		transrule_def NL trans_statements |
-		transrule_def NL |
-		trans_def NL |
-		NL trans_statements |
-		NL;
+alias_dec		: 	ALIAS ID ASSIGN LBRACE identifier_list RBRACE 
+				;
 
-trans_def	: TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID	{addTrans($9.sval,$2.sval);};
-transrule_def	: TRANSRULE ID LBRACE rule_expressions RBRACE	{setRuleName($2.sval);addRule();};
 
-rule_expressions: 
-		type_def NL optional_expressions|
-		NL rule_expressions |
-		type_def nl_string|
-		type_def;
+
+trans_section	:	trans_statements
+					{	System.out.println("Trans Section Parsed"); }
+				;
+
+trans_statements:	trans_def NL trans_statements 
+				|	transrule_def NL trans_statements 
+				|	NL trans_statements
+				|
+				;
+
+trans_def		:	TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID	
+					{  addTrans($9.sval,$2.sval); }
+				;
+
+transrule_def	:	TRANSRULE ID LBRACE rule_expressions RBRACE	
+					{	setRuleName($2.sval);addRule(); }
+				;
+
+rule_expressions:	type_def NL optional_expressions
+				|	NL type_def NL optional_expressions
+				;
 		
-nl_string	: NL nl_string |
-		  NL;
-type_def	:
-		TYPE ASSIGN ID {setRuleType($3.sval);};
+type_def		: 	TYPE ASSIGN ID {setRuleType($3.sval);};
 
-optional_expressions:
-		rule_class NL optional_expressions|
-		resolve	 NL	optional_expressions|
-		prob NL	optional_expressions|
-		condition NL	optional_expressions|
-		NL		optional_expressions|
-		condition |
-		resolve |
-		prob |
-		rule_class |
-		NL;
+optional_expressions:	rule_class NL optional_expressions
+					|	resolve NL optional_expressions
+					|	prob NL	optional_expressions
+					|	condition NL optional_expressions
+					|
+					;
 
-resolve		: RESOLVE ASSIGN ID {System.out.println("resolve:" + $3.sval);};
-rule_class	: CLASS ASSIGN ID {System.out.println("class:" + $3.sval);};
-prob		: PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM {System.out.println("prob:" + ($3.ival*10 +$5.ival*0.1));};
-condition	: CONDITION ASSIGN  lhs compare rhs {setCondition($4.sval);};
-lhs		: condition_stmt {setLHS();};
-rhs		: condition_stmt {setRHS();};
+resolve			:	RESOLVE ASSIGN ID {System.out.println("resolve:" + $3.sval);}
+				;
 
-condition_stmt	: ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"EMPTY");}|
-		  builtin_alias LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"EMPTY");}|
-		  builtin_alias DOT ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval, $3.sval);}|
-		  NUM {setConditionExpr($1.ival);};
+rule_class		:	CLASS ASSIGN ID {System.out.println("class:" + $3.sval);}
+				;
 
-builtin_alias	: PEER {$$.sval = $1.sval;}|
-		  NEIGHBOR {$$.sval = $1.sval;}|
-		  ENEMY {$$.sval = $1.sval;};
+prob			:	PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM {
+				  		setProb($3.ival*10 +$5.ival*0.1); }
+				;
 
-range_stmt	: NUM {setProx($1.ival);}|
-		  NUM COM range_stmt|
-		  NUM DASH NUM|
-		  NUM DASH NUM COM range_stmt;
+condition		:	CONDITION ASSIGN  lhs compare rhs {setCondition($4.sval);}
+				;
 
-compare		: EQ {$$.sval = "EQ";}|
-		  LT {$$.sval = "LT";}|
-		  GT {$$.sval = "GT";}|
-		  GT EQ {$$.sval = "GET";}|
-		  LT EQ {$$.sval = "LET";}|
-		  NOT EQ {$$.sval = "NEQ";};
-		;
+lhs				:	condition_stmt {setLHS();}
+				;
 
-//sim
+rhs				:	condition_stmt {setRHS();}
+				;
 
-simulation_section:
-		simulation_stmts;
+condition_stmt	:	ID LBRACK range_stmt RBRACK {setConditionExpr($1.sval,"*");}
+				|	builtin_alias LBRACK range_stmt RBRACK {
+						setConditionExpr($1.sval,"*");}
+				|	builtin_alias DOT ID LBRACK range_stmt RBRACK {
+						setConditionExpr($1.sval, $3.sval);}
+				|  NUM {setConditionExpr($1.ival);}
+				;
 
-simulation_stmts:
-		populate_stmt NL simulation_stmts|
-		sim_stmt NL simulation_stmts|
-		start_stmt NL simulation_stmts|
-		NL simulation_stmts|
-		start_stmt|
-		sim_stmt|
-		populate_stmt|
-		NL;
+builtin_alias	:	PEER {$$.sval = $1.sval;}
+				|	NEIGHBOR {$$.sval = $1.sval;}
+				|	ENEMY {$$.sval = $1.sval;}
+				;
 
+range_stmt		:	NUM {setProx($1.ival);}
+				|	NUM COM range_stmt
+				|	NUM DASH NUM
+				|	NUM DASH NUM COM range_stmt
+				;
 
-populate_stmt:
-	POPULATE LPARAN ID COM ID COM fill_func RPARAN {
-							popSim($3.sval, $5.sval);
-							//System.out.println("Populate " + $3.sval + "," + $5.sval + "," + $7.sval);
-							};
+compare			: 	EQ {$$.sval = "EQ";}
+				|	LT {$$.sval = "LT";}
+				|	GT {$$.sval = "GT";}
+				|	GT EQ {$$.sval = "GET";}
+				|	LT EQ {$$.sval = "LET";}
+				|	NOT EQ {$$.sval = "NEQ";}
+				;
+			
+simulation_section	:	simulation_stmts
+					;
 
+simulation_stmts:	populate_stmt NL simulation_stmts
+				|	sim_stmt NL simulation_stmts
+				|	start_stmt NL simulation_stmts
+				|	NL simulation_stmts
+				|
+				;
 
-fill_func:
-	//DOTFUNC LBRACK NUM COM NUM RBRACK {System.out.println("Dot Function");}|
-	//RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {System.out.println("Rectangle Function");};
-	DOTFUNC LBRACK NUM COM NUM RBRACK {	
-						setPopType("dot");
-						popParams( new float[] {$3.ival, $5.ival});
-						//System.out.println("Dot Function");
-						}|
-	RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK {
-						setPopType("rectangle");
-						popParams( new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
-						//System.out.println("Rectangle Function");
-						};
+populate_stmt	:	POPULATE LPARAN ID COM ID COM fill_func RPARAN 
+					{ popSim($3.sval, $5.sval); }
+				;
 
-sim_stmt:
-	SIM ID ASSIGN LBRACE identifier_list RBRACE {System.out.println("Sim Function");};
+fill_func		:	DOTFUNC LBRACK NUM COM NUM RBRACK 
+					{	
+					setPopType(PopulateType.DOT);
+					popParams( new float[] {$3.ival, $5.ival});
+					}
+				|	RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK 
+					{
+					setPopType(PopulateType.RECTANGLE);
+					popParams( 
+						new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
+					}
+				|	BLINKER LBRACK NUM COM NUM COM ID RBRACK 
+					{
+						int bAlign = -1;
+						if ($7.sval.equalsIgnoreCase("h"))
+							bAlign = Blinker.HORIZONTAL;
+						else if ($7.sval.equalsIgnoreCase("v")) 
+							bAlign = Blinker.VERTICAL;
+						else
+							yyerror("Incorrect blinker align");
+						setPopType(PopulateType.BLINKER);
+						popParams(new float[] {$3.ival, $5.ival, bAlign});
+					}
+				|	GLIDER LBRACK NUM COM NUM COM ID RBRACK 
+					{
+						int bDir = -1;
+						String dir = $7.sval;
+						if(dir.equalsIgnoreCase("NW"))
+							bDir = Glider.NW;
+						else if(dir.equalsIgnoreCase("NE"))
+							bDir = Glider.NE;
+						else if(dir.equalsIgnoreCase("SW"))
+							bDir = Glider.SW;
+						else if(dir.equalsIgnoreCase("SE"))
+							bDir = Glider.SE;
+						else
+							yyerror("Incorrect glider direction");
+						
+						setPopType(PopulateType.GLIDER);
+						popParams(
+							new float[] {$3.ival, $5.ival, bDir});
+						}
+				;
 
-start_stmt:
-	START LPARAN NUM COM ID RPARAN {System.out.println("Start Function");};
+sim_stmt	:	SIM ID ASSIGN LBRACE identifier_list RBRACE 
+				;
 
+start_stmt		:	START LPARAN NUM COM ID RPARAN
+				;
 
-//generic
+dim_list		:	NUM {addDim($1.ival);}
+				|	NUM COM dim_list {addDim($1.ival);}
+				;
 
-numeric_list	: NUM {$$.sval = Integer.toString($1.ival);}|
-		  NUM COM numeric_list {$$.sval = Integer.toString($1.ival) + "," + $3.sval;};
-
-dim_list	: NUM {addDim($1.ival);}|
-		  NUM COM dim_list {addDim($1.ival);};
-
-
-identifier_list : ID 				{addID($1.sval); } |
-		  ID COM identifier_list 	{addID($1.sval); } |
-		  ID COL ID 			{addID($1.sval); addColor($1.sval, $3.sval);} |
-		  ID COL ID COM identifier_list {addID($1.sval); addColor($1.sval, $3.sval);};
+identifier_list :	ID 						{addID($1.sval); } 
+				|	ID COM identifier_list 	{addID($1.sval); } 
+				|	ID COL ID 				
+						{ addID($1.sval); addColor($1.sval, $3.sval); }
+				|	ID COL ID COM identifier_list 
+						{ addID($1.sval); addColor($1.sval, $3.sval); }
+				;
 
 %%
 
 /* a reference to the lexer object */
 private Yylex lexer;
-
 static Simulation s;
-
-				
 Vector<Integer> prox = new Vector<Integer>(); //proximity
 Vector<String> idList = new Vector<String>();
 static Vector<Float> popArgs = new Vector<Float>();
-
-TransRule trRule = new TransRule("Deafult");
+TransRule trRule = new TransRule("Default");
 CondExpr cond;
 CondExpr LHS, RHS;
-
 PopulateType ptype;
-
 
 
 /* interface to the lexer */
@@ -263,16 +296,30 @@ private int yylex () {
 /* error reporting */
 public void yyerror (String error) {
   System.err.println ("Error: " + error);
+  System.exit(1);
 }
+
 
 /* lexer is created in the constructor */
 public Parser(Reader r) {
   lexer = new Yylex(r, this);
 }
 
-
 private void addColor(String cls, String clr){
-  s.classColors.put(cls, Color.BLACK);
+  	if(clr.equalsIgnoreCase("red"))
+		s.classColors.put(cls, Color.RED);
+	if(clr.equalsIgnoreCase("black"))
+	        s.classColors.put(cls, Color.BLACK);
+	if(clr.equalsIgnoreCase("blue"))
+		s.classColors.put(cls, Color.BLUE);
+	if(clr.equalsIgnoreCase("green"))
+	        s.classColors.put(cls, Color.GREEN);
+	if(clr.equalsIgnoreCase("orange"))
+	        s.classColors.put(cls, Color.ORANGE);
+	if(clr.equalsIgnoreCase("yellow"))
+		s.classColors.put(cls, Color.YELLOW);
+	if(clr.equalsIgnoreCase("white"))
+	        s.classColors.put(cls, Color.WHITE);
 }
 
 private void addDim(int x){
@@ -280,9 +327,10 @@ private void addDim(int x){
 }
 
 private void addID(String i){
-	//System.out.println(i);
+	System.out.println("adding " + i);
 	idList.add(i);
 }
+
 private void setGridType(int m){
 	switch(m){
 		case 1:  s.gridtype = GridType.BOUNDED;break;
@@ -311,11 +359,11 @@ private void addClasses(){
 }
 
 private void addStates(){
-	for (Enumeration e = idList.elements(); e.hasMoreElements();)
-		{
-			String ID = (String) e.nextElement();
-			s.states.add(ID);
-		}
+	for(int i=idList.size()-1;i>=0;i--)
+	{
+		String ID = (String) idList.get(i);
+		s.states.add(ID);
+	}
 	idList.clear();
 }
 
@@ -344,6 +392,10 @@ private void setConditionExpr(String condClass, String condState){
 	cond = new CondExpr(condClass, condState, prox);
 }
 
+private void setProb(double prob){
+	trRule.prob = (float)prob;
+}
+
 private void setLHS(){
 //	System.out.println("LHS "); 
 	LHS = cond;
@@ -356,7 +408,7 @@ private void setRHS(){
 }
 
 private void setProx(int n){
-	System.out.println("Prox:" + n);
+	//System.out.println("Prox:" + n);
 	prox = new Vector<Integer>();
 	prox.add(n);
 }
@@ -413,26 +465,25 @@ private void addRule(){
 	}
 */	
 	s.transrule.add(trRule);
-	trRule = new TransRule("Deafult");
+	trRule = new TransRule("Default");
 }
 
 private void popParams(float[] params){
 	//popArgs.clear();
 	popArgs = new Vector<Float>();
 	for(float i:params){
-	System.out.println(i);
-	popArgs.add(new Float(i));
+		System.out.print(i + "\t");
+		popArgs.add(new Float(i));
 	}
 }
-private void setPopType(String t){
-	if (t.equals("dot")) ptype = PopulateType.DOT;
-	else if (t.equals("rectangle")) ptype = PopulateType.RECTANGLE;
-	else System.out.println("No Pop Type matched for: " + t);
+
+private void setPopType(PopulateType type){
+	ptype = type;
 }
 
 private void popSim(String sClass, String sState){
 	s.populate.add(new Populate(sClass, sState, ptype, popArgs));
-	//System.out.println(sClass + " - " + sState + " - " + ptype);
+	System.out.println(sClass + " - " + sState + " - " + ptype);
 	//popArgs.clear();
 	//popArgs.add(new Float(17));
 	//popArgs.add(new Float(18));
@@ -440,75 +491,43 @@ private void popSim(String sClass, String sState){
 }
 
 public static void main(String args[]) throws IOException {
+	try {
+		UIManager.setLookAndFeel(
+			UIManager.getSystemLookAndFeelClassName());
+	} catch (Exception e) {}
+	s = Simulation.createSimulation();
+	s.generations = 0;
 
-		s = Simulation.createSimulation();
-		s.generations = 0;
+	s.gridsize = new Vector<Integer>();
+	s.classColors = new Hashtable<String, Color>();	
+	s.classes = new Vector<String>();
+	s.states = new Vector<String>();
+	s.trans = new Vector<Trans>();
+	s.transrule = new Vector<TransRule>();
+	s.simrules = new Vector<TransRule>();
+	s.populate = new Vector<Populate>();
+	
 
-		s.gridsize = new Vector<Integer>();
-		s.classColors = new Hashtable<String, Color>();	
-		s.classes = new Vector<String>();
-		s.states = new Vector<String>();
-		s.trans = new Vector<Trans>();
-		s.transrule = new Vector<TransRule>();
-		s.simrules = new Vector<TransRule>();
-		s.populate = new Vector<Populate>();
-		
-
-	  	Parser yyparser = new Parser(new FileReader(args[0]));
-	 	yyparser.yyparse();
-/**/
-		for (Enumeration e = s.transrule.elements(); e.hasMoreElements();)
-		{		
+	Parser yyparser = new Parser(new FileReader(args[0]));
+	System.out.println("Starting parsing");
+	yyparser.yyparse();
+	System.out.println("Finished parsing");
+	for (Enumeration e = s.transrule.elements(); e.hasMoreElements();)
+	{		
 		TransRule tr = (TransRule) e.nextElement();
 		s.simrules.add(tr);
-//		System.out.println(tr.name + ";" + tr.type.name);
-		}
+	}
 
-		for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
-		{		
+	for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
+	{		
 		Populate p = (Populate) e.nextElement();
-		System.out.println(p.className + " - " + p.stateName + " - " + p.populateType);
-
-
-			for (Enumeration e2 = p.populateArgs.elements(); e2.hasMoreElements();)
-			{		
-				Float r = (Float) e2.nextElement();
-				System.out.println(r);
-			}
-
+		for (Enumeration e2 = p.populateArgs.elements(); e2.hasMoreElements();)
+		{		
+			Float r = (Float) e2.nextElement();
+			System.out.println(r);
 		}
-		//s.simrules.add(birth);
-		//s.simrules.add(death);
-		//s.simrules.add(crowded);
-		
-		/*
-		Vector<Float> popDot1;
-		Vector<Float> popDot2;
-
-
-		//GLIDER 1
-		popArgs = new Vector<Float>();
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(17));
-		popArgs.add(new Float(19));
-		popArgs.add(new Float(17));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.RECTANGLE, popArgs));
-
-		popDot1 = new Vector<Float>();
-		popDot1.add(new Float(17));
-		popDot1.add(new Float(18));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot1));
-
-		popDot2 = new Vector<Float>();
-		popDot2.add(new Float(18));
-		popDot2.add(new Float(19));
-		s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popDot2));
-*/
-
-		GUI gui = new GUI();
-		gui.run();
-
-
-
-
+	}
+	System.out.println("Starting GUI");
+	GUI gui = new GUI();
+	gui.run();
 }
