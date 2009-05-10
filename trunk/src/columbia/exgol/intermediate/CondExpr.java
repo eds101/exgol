@@ -35,21 +35,19 @@ public class CondExpr {
         this.proximity = prox;
     }
 
-    private boolean performEval(Cell kernel, Cell cell) {
-        if(!condState.equals(cell.state) && !condState.equals("*"))
-            return false;
-        if (condClass.equals(PEER)) {
-            return cell.isPeer(kernel);
-        } else if (condClass.equals(ENEMY)) {
-            return cell.isEnemy(kernel);
-        } else if (condClass.equals(NEIGHBOR)) {
-            return cell.isNeighbor(kernel);
-        } else {
-            return condClass.equals(cell.className);
+    void countCell(Cell c, Hashtable<String, Integer> neighbors){
+        if (!c.className.equals("EMPTY")) {
+            Integer cellCount = neighbors.get(c.className);
+            if (cellCount == null) {
+                cellCount = 0;
+            }
+            cellCount++;
+            neighbors.put(c.className, cellCount);
         }
     }
-
+    
     Hashtable<String, Integer> evaluate(Cell[][] cells, int x, int y, GridType gt) {
+        Hashtable<String, Integer> neighbors = new Hashtable<String, Integer>();
         Hashtable<String, Integer> retVal = new Hashtable<String, Integer>();
         if (isNum) {
             retVal.put("EMPTY", value);
@@ -60,11 +58,10 @@ public class CondExpr {
         Simulation s = Simulation.getSimulation();
         int maxX = s.gridsize.get(0);
         int maxY = s.gridsize.get(1);
-        Integer cellCount = 0;
 
         Cell kernel = cells[x][y];
         if (!kernel.className.equals("EMPTY")) {
-            retVal.put(kernel.className, 0);
+            neighbors.put(kernel.className, 0);
         }
 
         for (int p = 0; p < proximity.size(); p++) {
@@ -73,59 +70,23 @@ public class CondExpr {
 
             x1 = x - i;
             y1 = y - i;		//top left
-            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY) {
-                c = cells[x1][y1];
-                if (performEval(kernel, c)) {
-                    cellCount = retVal.get(c.className);
-                    if (cellCount == null) {
-                        cellCount = 0;
-                    }
-                    cellCount++;
-                    retVal.put(c.className, cellCount);
-                }
-            }
+            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY)
+                this.countCell(cells[x1][y1],neighbors);
 
             x1 = x + i;
             y1 = y - i;		//top right
-            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY) {
-                c = cells[x1][y1];
-                if (performEval(kernel, c)) {
-                    cellCount = retVal.get(c.className);
-                    if (cellCount == null) {
-                        cellCount = 0;
-                    }
-                    cellCount++;
-                    retVal.put(c.className, cellCount);
-                }
-            }
+            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY)
+                this.countCell(cells[x1][y1],neighbors);
 
             x1 = x - i;
             y1 = y + i;		//bottom left
-            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY) {
-                c = cells[x1][y1];
-                if (performEval(kernel, c)) {
-                    cellCount = retVal.get(c.className);
-                    if (cellCount == null) {
-                        cellCount = 0;
-                    }
-                    cellCount++;
-                    retVal.put(c.className, cellCount);
-                }
-            }
+            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY)
+                this.countCell(cells[x1][y1],neighbors);
 
             x1 = x + i;
             y1 = y + i;		//bottom right
-            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY) {
-                c = cells[x1][y1];
-                if (performEval(kernel, c)) {
-                    cellCount = retVal.get(c.className);
-                    if (cellCount == null) {
-                        cellCount = 0;
-                    }
-                    cellCount++;
-                    retVal.put(c.className, cellCount);
-                }
-            }
+            if (x1 >= 0 && x1 < maxX && y1 >= 0 && y1 < maxY)
+                this.countCell(cells[x1][y1],neighbors);
 
             y1 = y - i;
             y2 = y + i;
@@ -133,26 +94,14 @@ public class CondExpr {
             {
                 try {
                     // Top -->
-                    if (performEval(kernel, cells[x1][y1])) {
-                        cellCount = retVal.get(cells[x1][y1].className);
-                        if (cellCount == null) {
-                            cellCount = 0;
-                        }
-                        cellCount++;
-                        retVal.put(cells[x1][y1].className, cellCount);
-                    }
+                    c = cells[x1][y1];
+                    this.countCell(c,neighbors);
                 } catch(ArrayIndexOutOfBoundsException e) {}
 
                 try {
                     // Bottom -->
-                    if (performEval(kernel, cells[x1][y2])) {
-                        cellCount = retVal.get(cells[x1][y2].className);
-                        if (cellCount == null) {
-                            cellCount = 0;
-                        }
-                        cellCount++;
-                        retVal.put(cells[x1][y2].className, cellCount);
-                    }
+                    c = cells[x1][y2];
+                    this.countCell(c,neighbors);
                 } catch(ArrayIndexOutOfBoundsException e) {}
 
             }
@@ -164,27 +113,47 @@ public class CondExpr {
 
                 try {
                     //Right v
-                    if (performEval(kernel, cells[x1][y1])) {
-                        cellCount = retVal.get(cells[x1][y1].className);
-                        if (cellCount == null) {
-                            cellCount = 0;
-                        }
-                        cellCount++;
-                        retVal.put(cells[x1][y1].className, cellCount);
-                    }
+                    c = cells[x1][y1];
+                    this.countCell(c,neighbors);
                 } catch(ArrayIndexOutOfBoundsException e) {}
 
                 try {
                     //Left v
-                    if (performEval(kernel, cells[x2][y1])) {
-                        cellCount = retVal.get(cells[x2][y1].className);
-                        if (cellCount == null) {
-                            cellCount = 0;
-                        }
-                        cellCount++;
-                        retVal.put(cells[x2][y1].className, cellCount);
-                    }
+                    c = cells[x2][y1];
+                    this.countCell(c,neighbors);
                 } catch(ArrayIndexOutOfBoundsException e) {}
+            }
+            // handle PEER
+            if (condClass.equals(PEER)) {
+                retVal = neighbors;
+            }
+            // handle ENEMY, count the number of neighbor
+            // cells not being of the same class as the kernel
+            else if (condClass.equals(ENEMY)) {
+                for (String cl : neighbors.keySet()) {
+                    int enemyCount = 0;
+                    for (String tmp : neighbors.keySet()) {
+                        if(!cl.equals(tmp))
+                            enemyCount += neighbors.get(tmp);
+                    }
+                    retVal.put(cl, enemyCount);
+                }
+            }
+            // handle NEIGHBOR
+            else if (condClass.equals(NEIGHBOR)){
+                int totCount = 0;
+                for (String cl : neighbors.keySet()) {
+                    totCount += neighbors.get(cl);
+                }
+                //everyone has the same number of neighbors
+                for (String cl : neighbors.keySet()) {
+                    retVal.put(cl, totCount);
+                }
+            }
+            // handle direct class name
+            else{
+                retVal.put(kernel.className,
+                        neighbors.get(kernel.className));
             }
         }
         return retVal;
