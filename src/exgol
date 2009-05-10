@@ -1,0 +1,14 @@
+#! /bin/bash
+if [ ! -n "$1" ]
+then
+	echo "Usage: `basename $0` <program.exgol>"
+	exit 1
+fi
+
+if [ ! -f $1 ]
+then
+	echo "File not found: " $1
+	exit 2
+fi
+
+java Parser $1
