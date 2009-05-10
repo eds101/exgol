@@ -57,7 +57,7 @@ COL 		= ":"
 
 //identifiers
 NUM		= [0-9]+
-ID		= [a-zA-Z]([a-zA-Z0-9])*
+ID		= [a-zA-Z]([a-zA-Z_0-9])*
 
 //space handling
 NL  		= ("\n" | "\r" | "\r\n")
