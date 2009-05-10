@@ -1,3 +1,49 @@
+<<<<<<< .mine
+#sample exgol program
+
+gridsize:={50,100}
+class:={KNIGHT:red,DRAGON:blue}
+state:={ALIVE,SICK,INJURED}
+gridtype:=bounded
+
+%%
+
+trans DIE	:=	{ALIVE,SICK,INJURED}	-> EMPTY
+trans BREED	:=	{EMPTY}			-> ALIVE
+trans BREEDINJ	:=	{EMPTY}			-> INJURED
+
+transrule BIRTH	 {
+	type := BREED
+	class := {DRAGON,KNIGHT}
+	resolve := {KNIGHT}
+	condition := peer.ALIVE[1] = 3
+}
+
+transrule CROWDED {
+	type := DIE
+	condition := peer.ALIVE[1] > 3
+}
+
+transrule ALONE {
+	type := DIE
+	condition := peer.ALIVE[1] < 2
+}
+
+%%
+
+populate(KNIGHT, ALIVE, dot [10,20])
+#populate(KNIGHT, INJURED, glider [10,10,NW])
+#populate(DRAGON, ALIVE, glider [20,10,NE])
+#populate(DRAGON, ALIVE, glider [10,20,SW])
+#populate(KNIGHT, ALIVE, glider [20,20,SE])
+#populate(KNIGHT, ALIVE, blinker [40,10,v])
+
+
+sim gol:={BREED,DEATH,OVERPOPULATION}
+start(0,gol)
+
+
+=======
 #sample exgol program
 
 gridsize:={50,100}
@@ -40,3 +86,4 @@ sim gol:={BREED,DEATH,OVERPOPULATION}
 start(0,gol)
 
 
+>>>>>>> .r92
