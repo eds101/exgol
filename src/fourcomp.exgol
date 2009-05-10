@@ -1,0 +1,38 @@
+gridsize:={60,60}
+class:={KNIGHT:white, DRAGON:blue, ME:red, YOU:yellow}
+state:={ALIVE, INJURED, ALMOSTDEAD}
+gridtype:=bounded
+
+%%
+
+trans HEAL :={EMPTY,INJURED,ALMOSTDEAD} -> ALIVE
+trans HURT :={ALIVE} -> INJURED
+trans HURTBAD := {ALIVE,INJURED} -> ALMOSTDEAD
+
+transrule BIRTH     {
+    type := HEAL
+    condition := peer[1,2] > 2
+    prob := 0.9
+}
+
+transrule INJURE {
+    type := HURT
+    condition := peer[1,2,3] >= 3
+    prob := 0.2
+}
+
+transrule BAD {
+    type := HURTBAD
+    condition := enemy[1] > 3
+    prob := 0.5
+}
+
+%%
+
+populate(KNIGHT, ALIVE, rectangle[0,0,1,1])
+populate(DRAGON, ALIVE, rectangle[58,0,59,1])
+populate(ME, ALIVE, rectangle[0, 58,1,59])
+populate(YOU, ALIVE, rectangle[58,58,59,59])
+
+sim gol:={HEAL,DEATH,OVERPOPULATION}
+start(0,gol) 
