@@ -75,7 +75,6 @@ public class TransRule {
             if(lhsCount == null || rhsCount == null)
                remove = true;
             else
-
         
             switch (cond.op) {
                 case GT:
