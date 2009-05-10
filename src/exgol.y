@@ -128,7 +128,7 @@ trans_def		:	TRANS ID ASSIGN LBRACE identifier_list RBRACE DASH GT ID
 				;
 
 transrule_def	:	TRANSRULE ID LBRACE rule_expressions RBRACE	
-					{	setRuleName($2.sval);addRule(); }
+					{	setRuleName($2.sval); addRule();}
 				;
 
 rule_expressions:	type_def NL optional_expressions
@@ -515,6 +515,10 @@ private void addRule(){
 	}
 
 */
+    // check defaults
+    if(trRule.cond == null)
+        trRule.cond = new Condition();
+
 	s.transrule.add(trRule);
 	trRule = new TransRule("Default");
 }
