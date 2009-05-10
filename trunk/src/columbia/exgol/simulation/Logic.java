@@ -56,7 +56,12 @@ public class Logic {
                         } else {
                             if (classes.size() == 1) {
                                 newCells[x][y].className = classes.get(0);
-                            } else {
+                            } 
+                            else if(tr.resolve.size() < 1){
+                                newCells[x][y].className =
+                                       classes.get((int)(classes.size()*Math.random()));
+                            }
+                            else{
                                 for (String r : tr.resolve) {
                                     if (classes.contains(r)) {
                                         newCells[x][y].className = r;
