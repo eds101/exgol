@@ -1,5 +1,5 @@
 gridsize:={60,60}
-class:={c1:blue}
+class:={c1:black}
 state:={a,b,c,d,e}
 gridtype:=bounded
 
@@ -11,12 +11,8 @@ trans t3 := {c} -> d
 trans t4 := {d} -> e
 trans t5 := {e} -> a
 
-
-
 transrule T1 {
-	
 	type := t1
-
 }
 
 transrule T2 {
@@ -37,39 +33,10 @@ type := t5
 
 %%
 
-populate(c1, a, dot[10,12])
-populate(c1, a, dot[11,12])
-populate(c1, a, dot[12,12])
-populate(c1, a, dot[13,12])
-populate(c1, a, dot[14,12])
-populate(c1, a, dot[15,12])
-
-populate(c1, a, dot[10,17])
-populate(c1, a, dot[11,17])
-populate(c1, a, dot[12,17])
-populate(c1, a, dot[13,17])
-populate(c1, a, dot[14,17])
-populate(c1, a, dot[15,17])
-
-populate(c1, a, dot[10,22])
-populate(c1, a, dot[11,22])
-populate(c1, a, dot[12,22])
-populate(c1, a, dot[13,22])
-populate(c1, a, dot[14,22])
-populate(c1, a, dot[15,22])
-
-populate(c1, a, dot[10,12])
-populate(c1, a, dot[10,13])
-populate(c1, a, dot[10,14])
-populate(c1, a, dot[10,15])
-populate(c1, a, dot[10,16])
-populate(c1, a, dot[10,17])
-populate(c1, a, dot[10,18])
-populate(c1, a, dot[10,19])
-populate(c1, a, dot[10,20])
-populate(c1, a, dot[10,21])
-populate(c1, a, dot[10,22])
-
+populate(c1, a, rectangle[5,5,40,8])
+populate(c1, a, rectangle[5,25,35,28])
+populate(c1, a, rectangle[5,45,40,48])
+populate(c1, a, rectangle[5,5,8,45])
 
 sim gol:={T1, T2, T3, T4, T5}
 start(0,gol)

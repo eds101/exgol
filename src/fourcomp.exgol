@@ -34,5 +34,5 @@ populate(DRAGON, ALIVE, rectangle[58,0,59,1])
 populate(ME, ALIVE, rectangle[0, 58,1,59])
 populate(YOU, ALIVE, rectangle[58,58,59,59])
 
-sim gol:={HEAL,DEATH,OVERPOPULATION}
+sim gol:={BIRTH,INJURE,BAD}
 start(0,gol) 
