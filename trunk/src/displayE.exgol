@@ -1,5 +1,5 @@
 gridsize:={60,60}
-class:={c1:black}
+class:={c1:blue}
 state:={a,b,c,d,e}
 gridtype:=bounded
 
@@ -14,7 +14,9 @@ trans t5 := {e} -> a
 
 
 transrule T1 {
-type := t1
+	
+	type := t1
+
 }
 
 transrule T2 {
