@@ -68,11 +68,11 @@
 %%
 
 exgol			:	init_section SEP trans_section SEP simulation_section
-					{ System.out.println("Exgol Parsed"); }
+					{ /*System.out.println("Exgol Parsed");*/ }
 				;
 
 init_section	:	init_statements 
-					{ System.out.println("Init Section Parsed"); }
+					{ /*System.out.println("Init Section Parsed");*/ }
 				;
 
 init_statements	:	grid_def NL init_statements
@@ -114,7 +114,7 @@ alias_dec		: 	ALIAS ID ASSIGN LBRACE identifier_list RBRACE
 
 
 trans_section	:	trans_statements
-					{	System.out.println("Trans Section Parsed"); }
+					{	/*System.out.println("Trans Section Parsed");*/ }
 				;
 
 trans_statements:	trans_def NL trans_statements 
@@ -215,14 +215,14 @@ populate_stmt	:	POPULATE LPARAN ID COM ID COM fill_func RPARAN
 
 fill_func		:	DOTFUNC LBRACK NUM COM NUM RBRACK 
 					{	
-					setPopType(PopulateType.DOT);
-					popParams( new float[] {$3.ival, $5.ival});
+						setPopType(PopulateType.DOT);
+						popParams( new float[] {$3.ival, $5.ival});
 					}
 				|	RECTFUNC LBRACK NUM COM NUM COM NUM COM NUM RBRACK 
 					{
-					setPopType(PopulateType.RECTANGLE);
-					popParams( 
-						new float[] {$3.ival, $5.ival, $7.ival, $9.ival});
+						setPopType(PopulateType.RECTANGLE);
+						popParams(new float[] 
+							{$3.ival, $5.ival, $7.ival, $9.ival});
 					}
 				|	BLINKER LBRACK NUM COM NUM COM ID RBRACK 
 					{
@@ -380,7 +380,7 @@ private void printIDList(){
 	for (Enumeration e = idList.elements(); e.hasMoreElements();)
 		{
 			String ID = (String) e.nextElement();
-			System.out.println(ID);
+			//System.out.println(ID);
 		}
 	
 }
@@ -419,12 +419,12 @@ private void addTrans(String transTo, String transName){
 }
 
 private void setConditionExpr(int n){
-//	System.out.println("Cond Num - " + n); 
+	//	System.out.println("Cond Num - " + n); 
 	cond = new CondExpr(n);
 }
 
 private void setConditionExpr(String condClass, String condState){
-	System.out.println(condClass + " - " + condState); 
+	//System.out.println(condClass + " - " + condState); 
 	cond = new CondExpr(condClass, condState, (Vector<Integer>)prox.clone());
 	prox.clear();
 }
@@ -434,18 +434,18 @@ private void setProb(double prob){
 }
 
 private void setLHS(){
-//	System.out.println("LHS "); 
+	//	System.out.println("LHS "); 
 	LHS = cond;
 	cond = new CondExpr(1);
 }
 private void setRHS(){
-//	System.out.println("RHS "); 
+	//	System.out.println("RHS "); 
 	RHS = cond;
 	cond = new CondExpr(1);
 }
 
 private void setProx(int n){
-	System.out.println("Prox:" + n);
+	//System.out.println("Prox:" + n);
 	//prox = new Vector<Integer>();
 	prox.add(n);
 }
@@ -453,10 +453,11 @@ private void setProx(int n){
 private void setProx(int n, int m){
 	//System.out.println("Prox:" + n);
 	//prox = new Vector<Integer>();
-	if(m<n){yyerror("Incorrect range statement lower bound has to be less than upper bound!!!");}
+	if (m < n) {
+		yyerror("range statement: lower bound > upper bound.");}
 	for (int i = n; i<=m; i++){
-	prox.add(n);
-	System.out.println("Prox:" + n);
+		prox.add(n);
+		//System.out.println("Prox:" + n);
 	}
 
 }
@@ -471,7 +472,7 @@ private void setRuleType(String ruleName){
 		//System.out.println("Compare To " + tr.getName()); 
 		if (ruleName.equals(tr.getName())){
 		trRule.type = tr;
-		System.out.println("Rule Type " + ruleName); 
+		//System.out.println("Rule Type " + ruleName); 
 		};
 
 	}	
@@ -479,13 +480,13 @@ private void setRuleType(String ruleName){
 }
 
 private void setRuleName(String n){
-//	System.out.println("Rule name: " + n);
+	//	System.out.println("Rule name: " + n);
 	trRule.name = n;
 }
 
 private void setCondition(String relop){
 	RelopType r = RelopType.EQ;
-//	System.out.println("Relop " + relop);
+	//	System.out.println("Relop " + relop);
 	if(relop.equals("GT")){r = RelopType.GT;}
 	if(relop.equals("GET")){r = RelopType.GET;}
 	if(relop.equals("LT")){r = RelopType.LT;}
@@ -528,7 +529,7 @@ private void popParams(float[] params){
 	//popArgs.clear();
 	popArgs = new Vector<Float>();
 	for(float i:params){
-		System.out.print(i + "\t");
+		//System.out.print(i + "\t");
 		popArgs.add(new Float(i));
 	}
 }
@@ -539,7 +540,7 @@ private void setPopType(PopulateType type){
 
 private void popSim(String sClass, String sState){
 	s.populate.add(new Populate(sClass, sState, ptype, popArgs));
-	System.out.println(sClass + " - " + sState + " - " + ptype);
+	//System.out.println(sClass + " - " + sState + " - " + ptype);
 	//popArgs.clear();
 }
 
@@ -555,7 +556,7 @@ private void setSimParams(String simName){
 
 
 private void startSim(String simName, int gen){
-	System.out.println("Start sim " + simName + " "+ gen);
+	//System.out.println("Start sim " + simName + " "+ gen);
 	int err;
 	for (Enumeration o = simParams.get(simName).elements(); o.hasMoreElements();)
 		{
@@ -600,11 +601,10 @@ public static void main(String args[]) throws IOException {
 	
 
 	Parser yyparser = new Parser(new FileReader(args[0]));
-	System.out.println("Starting parsing");
+	//System.out.println("Starting parsing");
 	yyparser.yyparse();
-	System.out.println("Finished parsing");
-
-	System.out.println("Starting GUI!");
+	//System.out.println("Finished parsing");
+	//System.out.println("Starting GUI!");
 	GUI gui = new GUI();
 	gui.run();
 }
