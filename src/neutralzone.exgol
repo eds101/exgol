@@ -1,0 +1,40 @@
+gridsize:={60,60}
+class:={KNIGHT:red, DRAGON:blue, ME:black, YOU:yellow, HIM:green}
+state:={ALIVE, WEAK}
+gridtype:=bounded
+
+%%
+
+trans BREED := {EMPTY} -> ALIVE
+trans BREEDWEAK := {EMPTY} -> WEAK
+
+transrule BIRTH {
+type := BREED
+condition := peer[1] > enemy[1,2]
+prob:=0.4
+}
+
+transrule BIRTHWEAK{
+type := BREEDWEAK
+condition := peer[1] > enemy[1,2]
+prob:=0.3
+}
+%%
+
+populate(KNIGHT, ALIVE, dot[0,0])
+populate(KNIGHT, ALIVE, dot[1,1])
+
+populate(DRAGON, ALIVE, dot[59, 59])
+populate(DRAGON, ALIVE, dot[58, 58])
+
+populate (HIM, ALIVE, dot[30,30])
+populate (HIM, ALIVE, dot[29,29])
+
+populate(ME, ALIVE, dot[59, 0])
+populate(ME, ALIVE, dot[58, 1])
+
+populate(YOU, ALIVE, dot[0, 59])
+populate(YOU, ALIVE, dot[1, 58])
+sim gol:={BIRTH, BIRTHWEAK}
+start(0,gol)
+
