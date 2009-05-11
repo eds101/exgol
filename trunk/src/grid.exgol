@@ -1,89 +1,27 @@
-<<<<<<< .mine
-#sample exgol program
+class := {cell}
+state := {alive}
+gridsize := {40,40}
+gridtype := bounded
+%%
+trans BREED := {EMPTY} -> alive
+trans DIE := {alive} -> EMPTY
 
-gridsize:={50,100}
-class:={KNIGHT:red,DRAGON:blue}
-state:={ALIVE,SICK,INJURED}
-gridtype:=bounded
+transrule BIRTH {
+type:= BREED
+condition := peer[1] = 3
+}
 
+transrule LONELY {
+type := DIE
+condition := peer[1] < 2
+}
+
+transrule OVERPOPULATION{
+type := DIE
+condition := peer[1] > 3
+}
 %%
 
-trans DIE	:=	{ALIVE,SICK,INJURED}	-> EMPTY
-trans BREED	:=	{EMPTY}			-> ALIVE
-trans BREEDINJ	:=	{EMPTY}			-> INJURED
-
-transrule BIRTH	 {
-	type := BREED
-	class := {DRAGON,KNIGHT}
-	resolve := {KNIGHT}
-	condition := peer.ALIVE[1] = 3
-}
-
-transrule CROWDED {
-	type := DIE
-	condition := peer.ALIVE[1] > 3
-}
-
-transrule ALONE {
-	type := DIE
-	condition := peer.ALIVE[1] < 2
-}
-
-%%
-
-populate(KNIGHT, ALIVE, dot [10,20])
-#populate(KNIGHT, INJURED, glider [10,10,NW])
-#populate(DRAGON, ALIVE, glider [20,10,NE])
-#populate(DRAGON, ALIVE, glider [10,20,SW])
-#populate(KNIGHT, ALIVE, glider [20,20,SE])
-#populate(KNIGHT, ALIVE, blinker [40,10,v])
-
-
-sim gol:={BREED,DEATH,OVERPOPULATION}
-start(0,gol)
-
-
-=======
-#sample exgol program
-
-gridsize:={50,100}
-class:={KNIGHT:orange,DRAGON:blue}
-state:={ALIVE,INJURED}
-gridtype:=bounded
-
-%%
-
-trans DIE	:=	{ALIVE,INJURED}	-> EMPTY
-trans BREED	:=	{EMPTY}			-> ALIVE
-trans BREEDINJ:={EMPTY}			-> INJURED
-
-transrule BIRTH	 {
-	type := BREED
-	condition := peer.ALIVE[1] = 3
-}
-
-transrule CROWDED {
-	type := DIE
-	condition := peer.ALIVE[1] > 3
-}
-
-transrule ALONE {
-	type := DIE
-	condition := peer.ALIVE[1] < 2
-}
-
-%%
-
-populate(KNIGHT, ALIVE, blinker [40,10,v])
-
-populate(KNIGHT, ALIVE, blinker [40,5,h])
-populate(KNIGHT, ALIVE, glider [10,10,NW])
-populate(KNIGHT, ALIVE, glider [20,10,NE])
-populate(KNIGHT, ALIVE, glider [10,20,SW])
-populate(KNIGHT, ALIVE, glider [20,20,SE])
-
-sim gol:={BREED,DEATH,OVERPOPULATION}
-start(0,gol)
-
-
->>>>>>> .r92
+populate(cell, alive, rectangle[0,0,10,10])
+sim CONWAY := {BIRTH, LONELY, OVERPOPULATION}
+start(0, CONWAY)
