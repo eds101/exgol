@@ -1,0 +1,5 @@
+fix errors in lang ref manual
+write conclusion section
+decide on tutorial example progrs
+update lang ref manual and grammar to support only glider/blinker/rectangle/dot
+write code appendix
