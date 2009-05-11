@@ -156,8 +156,8 @@ rule_class		:	CLASS ASSIGN LBRACE ruleclass_identifier_list RBRACE
 									}
 				;
 
-prob			:	PROB ASSIGN NUM| PROB ASSIGN NUM DOT NUM {
-				  		setProb($3.ival*10 +$5.ival*0.1); }
+prob				: PROB ASSIGN NUM {setProb($3.ival);}
+				| PROB ASSIGN NUM DOT NUM {setProb($3.ival + $5.ival*0.1); }
 				;
 
 condition		:	CONDITION ASSIGN  lhs compare rhs {setCondition($4.sval);}
@@ -183,9 +183,9 @@ builtin_alias	:	PEER {$$.sval = $1.sval;}
 				;
 
 range_stmt		:	NUM {setProx($1.ival);}
-				|	NUM COM range_stmt
-				|	NUM DASH NUM
-				|	NUM DASH NUM COM range_stmt
+				|	NUM COM range_stmt {setProx($1.ival);}
+				|	NUM DASH NUM {setProx($1.ival, $3.ival);}
+				|	NUM DASH NUM COM range_stmt {setProx($1.ival, $3.ival);}
 				;
 
 compare			: 	EQ {$$.sval = "EQ";}
@@ -254,13 +254,13 @@ fill_func		:	DOTFUNC LBRACK NUM COM NUM RBRACK
 						}
 				;
 
-sim_stmt	:	SIM ID ASSIGN LBRACE identifier_list RBRACE 
+sim_stmt			:	SIM ID ASSIGN LBRACE identifier_list RBRACE  {setSimParams($2.sval);}
 				;
 
-start_stmt		:	START LPARAN NUM COM ID RPARAN
+start_stmt			:	START LPARAN NUM COM ID RPARAN {startSim($5.sval, $3.ival);}
 				;
 
-dim_list		:	NUM {addDim($1.ival);}
+dim_list			:	NUM {addDim($1.ival);}
 				|	NUM COM dim_list {addDim($1.ival);}
 				;
 
@@ -283,12 +283,15 @@ resolve_identifier_list :		ID 	{addResolveID($1.sval); }
 /* a reference to the lexer object */
 private Yylex lexer;
 static Simulation s;
-Vector<Integer> prox = new Vector<Integer>(); //proximity
+Vector<Integer> prox = new Vector<Integer>();
 Vector<String> idList = new Vector<String>();
 Vector<String> ruleClassIDList = new Vector<String>();
 Vector<String> resolveIDList = new Vector<String>();
 static Vector<Float> popArgs = new Vector<Float>();
 TransRule trRule = new TransRule("Default");
+
+Hashtable<String, Vector<String>> simParams = new Hashtable<String, Vector<String>>();
+
 CondExpr cond;
 CondExpr LHS, RHS;
 PopulateType ptype;
@@ -414,7 +417,8 @@ private void setConditionExpr(int n){
 
 private void setConditionExpr(String condClass, String condState){
 	System.out.println(condClass + " - " + condState); 
-	cond = new CondExpr(condClass, condState, prox);
+	cond = new CondExpr(condClass, condState, (Vector<Integer>)prox.clone());
+	prox.clear();
 }
 
 private void setProb(double prob){
@@ -433,10 +437,22 @@ private void setRHS(){
 }
 
 private void setProx(int n){
-	//System.out.println("Prox:" + n);
-	prox = new Vector<Integer>();
+	System.out.println("Prox:" + n);
+	//prox = new Vector<Integer>();
 	prox.add(n);
 }
+
+private void setProx(int n, int m){
+	//System.out.println("Prox:" + n);
+	//prox = new Vector<Integer>();
+	if(m<n){yyerror("Incorrect range statement lower bound has to be less than upper bound!!!");}
+	for (int i = n; i<=m; i++){
+	prox.add(n);
+	System.out.println("Prox:" + n);
+	}
+
+}
+
 
 private void setRuleType(String ruleName){
 	//System.out.println("Rule Type " + ruleName); 
@@ -507,7 +523,9 @@ private void addRule(){
 		String r = (String) e.nextElement();
 		System.out.println("Rule Class " + r);
 	}
+*/
 
+/*
 	for (Enumeration e = trRule.resolve.elements(); e.hasMoreElements();)
 	{		
 		String r = (String) e.nextElement();
@@ -515,6 +533,7 @@ private void addRule(){
 	}
 
 */
+
     // check defaults
     if(trRule.cond == null)
         trRule.cond = new Condition();
@@ -540,10 +559,45 @@ private void popSim(String sClass, String sState){
 	s.populate.add(new Populate(sClass, sState, ptype, popArgs));
 	System.out.println(sClass + " - " + sState + " - " + ptype);
 	//popArgs.clear();
-	//popArgs.add(new Float(17));
-	//popArgs.add(new Float(18));
-	//s.populate.add(new Populate("CELL", "ALIVE", PopulateType.DOT, popArgs));
 }
+
+
+
+private void setSimParams(String simName){
+	simParams.put(simName, (Vector<String>)idList.clone());
+	idList.clear();
+
+}
+
+
+
+
+private void startSim(String simName, int gen){
+	System.out.println("Start sim " + simName + " "+ gen);
+	int err;
+	for (Enumeration o = simParams.get(simName).elements(); o.hasMoreElements();)
+		{
+			err = 1;
+			String ID = (String) o.nextElement();
+			//System.out.println("Searching " + ID);
+			for (Enumeration i = s.transrule.elements(); i.hasMoreElements();)
+			{		
+				TransRule tr = (TransRule) i.nextElement();
+				//System.out.println("Matching " + tr.name);
+				if (ID.equals(tr.name)){
+					err = 0;
+					s.simrules.add(tr);
+					//System.out.println("Added " + ID);
+				}
+			}
+			if (err == 1) { yyerror("Unmatched rule name !!! " + ID + " mismatched for simulation "  + simName); }
+
+		}
+
+}
+
+
+
 
 public static void main(String args[]) throws IOException {
 	try {
@@ -567,12 +621,8 @@ public static void main(String args[]) throws IOException {
 	System.out.println("Starting parsing");
 	yyparser.yyparse();
 	System.out.println("Finished parsing");
-	for (Enumeration e = s.transrule.elements(); e.hasMoreElements();)
-	{		
-		TransRule tr = (TransRule) e.nextElement();
-		s.simrules.add(tr);
-	}
 
+/*
 	for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
 	{		
 		Populate p = (Populate) e.nextElement();
@@ -582,7 +632,19 @@ public static void main(String args[]) throws IOException {
 			//System.out.println(r);
 		}
 	}
-	System.out.println("Starting GUI");
+*/
+
+/*
+	for (Enumeration i = s.simrules.elements(); i.hasMoreElements();)
+		{		
+			TransRule cc = (TransRule) i.nextElement();
+			System.out.println("Found " + cc.name);
+
+		}
+*/
+
+
+	System.out.println("Starting GUI!");
 	GUI gui = new GUI();
 	gui.run();
 }
