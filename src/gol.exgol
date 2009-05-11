@@ -1,0 +1,27 @@
+class := {cell}
+state := {alive}
+gridsize := {40,40}
+gridtype := bounded
+%%
+trans BREED := {EMPTY} -> alive
+trans DIE := {alive} -> EMPTY
+
+transrule BIRTH {
+type:= BREED
+condition := peer[1] = 3
+}
+
+transrule LONELY {
+type := DIE
+condition := peer[1] < 2
+}
+
+transrule OVERPOPULATION{
+type := DIE
+condition := peer[1] > 3
+}
+%%
+
+populate(cell, alive, rectangle[0,0,10,10])
+sim CONWAY := {BIRTH, LONELY, OVERPOPULATION}
+start(0, CONWAY)
