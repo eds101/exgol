@@ -576,6 +576,7 @@ private void startSim(String simName, int gen){
 			if (err == 1) { yyerror("Unmatched rule name !!! " + ID + " mismatched for simulation "  + simName); }
 
 		}
+	s.generations = gen;
 
 }
 
