@@ -35,6 +35,6 @@ populate(ME, ALIVE, dot[58, 1])
 
 populate(YOU, ALIVE, dot[0, 59])
 populate(YOU, ALIVE, dot[1, 58])
-sim gol:={BIRTH}
-start(10,gol)
+sim gol:={BIRTH, BIRTHWEAK}
+start(0,gol)
 
