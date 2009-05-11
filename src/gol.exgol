@@ -1,6 +1,6 @@
-class := {cell}
+class := {blink:blue, glide:green}
 state := {alive}
-gridsize := {40,40}
+gridsize := {50,100}
 gridtype := bounded
 %%
 trans BREED := {EMPTY} -> alive
@@ -22,6 +22,12 @@ condition := peer[1] > 3
 }
 %%
 
-populate(cell, alive, rectangle[0,0,10,10])
+populate(blink, alive, blinker[15,4,h])
+populate(blink, alive, blinker[15,7,v])
+populate(glide, alive, glider[20,20,nw])
+populate(glide, alive, glider[30,20,ne])
+populate(glide, alive, glider[20,30,sw])
+populate(glide, alive, glider[30,30,se])
+
 sim CONWAY := {BIRTH, LONELY, OVERPOPULATION}
 start(0, CONWAY)
