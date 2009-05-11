@@ -132,31 +132,34 @@ transrule_def	:	TRANSRULE ID LBRACE rule_expressions RBRACE
 				;
 
 rule_expressions:	type_def NL optional_expressions
-				|	NL type_def NL optional_expressions
+				|	NL rule_expressions
+				|
 				;
 		
-type_def		: 	TYPE ASSIGN ID {setRuleType($3.sval);};
+type_def		: 	TYPE ASSIGN ID {setRuleType($3.sval);}
+				;
 
-optional_expressions:	rule_class NL optional_expressions
-					|	resolve NL optional_expressions
-					|	prob NL	optional_expressions
-					|	condition NL optional_expressions
+optional_expressions:	rule_class optional_expressions
+					|	resolve optional_expressions
+					|	prob optional_expressions
+					|	condition optional_expressions
+					|	NL optional_expressions
 					|
 					;
 
 resolve			:	RESOLVE ASSIGN LBRACE resolve_identifier_list RBRACE 
-									{
-									//System.out.println("resolve:" + $3.sval);
-									}
+					{
+						//System.out.println("resolve:" + $3.sval);
+					}
 				;
 
 rule_class		:	CLASS ASSIGN LBRACE ruleclass_identifier_list RBRACE 
-									{
-									//System.out.println("class:" + $3.sval);
-									}
+					{
+						//System.out.println("class:" + $3.sval);
+					}
 				;
 
-prob				: PROB ASSIGN NUM {setProb($3.ival);}
+prob			: PROB ASSIGN NUM {setProb($3.ival);}
 				| PROB ASSIGN NUM DOT NUM {setProb($3.ival + $5.ival*0.1); }
 				;
 
@@ -254,29 +257,34 @@ fill_func		:	DOTFUNC LBRACK NUM COM NUM RBRACK
 						}
 				;
 
-sim_stmt			:	SIM ID ASSIGN LBRACE identifier_list RBRACE  {setSimParams($2.sval);}
+sim_stmt		:	SIM ID ASSIGN LBRACE identifier_list RBRACE  
+					{setSimParams($2.sval);}
 				;
 
-start_stmt			:	START LPARAN NUM COM ID RPARAN {startSim($5.sval, $3.ival);}
+start_stmt		:	START LPARAN NUM COM ID RPARAN 
+					{startSim($5.sval, $3.ival);}
 				;
 
-dim_list			:	NUM {addDim($1.ival);}
+dim_list		:	NUM {addDim($1.ival);}
 				|	NUM COM dim_list {addDim($1.ival);}
 				;
 
 identifier_list :	ID 	{addID($1.sval); } 
 				|	ID COM identifier_list 	{addID($1.sval); } 
 				|	ID COL ID { addID($1.sval); addColor($1.sval, $3.sval); }
-				|	ID COL ID COM identifier_list { addID($1.sval); addColor($1.sval, $3.sval); }
+				|	ID COL ID COM identifier_list 
+					{ addID($1.sval); addColor($1.sval, $3.sval); }
 				;
 
-ruleclass_identifier_list :		ID 	{addRuleClassID($1.sval); } 
-				|	ID COM ruleclass_identifier_list {addRuleClassID($1.sval); }
-				;
+ruleclass_identifier_list	:	ID 	{addRuleClassID($1.sval); } 
+							|	ID COM ruleclass_identifier_list 
+								{addRuleClassID($1.sval); }
+							;
 
-resolve_identifier_list :		ID 	{addResolveID($1.sval); } 
-				|	ID COM resolve_identifier_list {addResolveID($1.sval); }
-				;
+resolve_identifier_list	:	ID 	{addResolveID($1.sval); } 
+						|	ID COM resolve_identifier_list 
+							{ addResolveID($1.sval); }
+						;
 
 %%
 
@@ -484,14 +492,6 @@ private void setCondition(String relop){
 	if(relop.equals("LET")){r = RelopType.LET;}
 	if(relop.equals("NEQ")){r = RelopType.NEQ;}
 	trRule.cond = new Condition(LHS, r, RHS);
-/*
-	System.out.println("Name " + trRule.name);
-	System.out.println("Type " + trRule.type.name);
-	System.out.println("LHSClass " + LHS.condClass);
-	System.out.println("LHS " + LHS.condState);
-	System.out.println("RHSClass " + LHS.condClass);
-	System.out.println("LHS " + LHS.condState);	
-*/
 }
 
 private void addRule(){
@@ -508,31 +508,13 @@ private void addRule(){
 			trRule.classes.add(ID);
 		}
 	ruleClassIDList.clear();
-//add resolve
+	//add resolve
 	for (Enumeration e = resolveIDList.elements(); e.hasMoreElements();)
 		{
 			String ID = (String) e.nextElement();
 			trRule.resolve.add(ID);
 		}
 	resolveIDList.clear();
-
-/*
-
-	for (Enumeration e = trRule.classes.elements(); e.hasMoreElements();)
-	{		
-		String r = (String) e.nextElement();
-		System.out.println("Rule Class " + r);
-	}
-*/
-
-/*
-	for (Enumeration e = trRule.resolve.elements(); e.hasMoreElements();)
-	{		
-		String r = (String) e.nextElement();
-		System.out.println("Rule Resolve " + r);
-	}
-
-*/
 
     // check defaults
     if(trRule.cond == null)
@@ -621,28 +603,6 @@ public static void main(String args[]) throws IOException {
 	System.out.println("Starting parsing");
 	yyparser.yyparse();
 	System.out.println("Finished parsing");
-
-/*
-	for (Enumeration e = s.populate.elements(); e.hasMoreElements();)
-	{		
-		Populate p = (Populate) e.nextElement();
-		for (Enumeration e2 = p.populateArgs.elements(); e2.hasMoreElements();)
-		{		
-			Float r = (Float) e2.nextElement();
-			//System.out.println(r);
-		}
-	}
-*/
-
-/*
-	for (Enumeration i = s.simrules.elements(); i.hasMoreElements();)
-		{		
-			TransRule cc = (TransRule) i.nextElement();
-			System.out.println("Found " + cc.name);
-
-		}
-*/
-
 
 	System.out.println("Starting GUI!");
 	GUI gui = new GUI();
