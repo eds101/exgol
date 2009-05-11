@@ -21,8 +21,19 @@ public class Logic {
     int iteration;
     Cell oddCells[][];
     Cell evenCells[][];
+    int genCount = 0;
 
     Cell[][] getNextGen() {
+        if (s.generations != 0) {
+            if (genCount == s.generations) {
+                if (iteration % 2 == 0)
+                    return oddCells;
+                else
+                    return evenCells;
+            }
+            genCount++;
+        }
+
         Cell[][] oldCells, newCells;
 
         iteration++;
@@ -39,9 +50,8 @@ public class Logic {
             for (int y = 0; y < s.gridsize.get(1); y++) {
                 newCells[x][y].className = oldCells[x][y].className;
                 newCells[x][y].state = oldCells[x][y].state;
-                for (int c = 0; c < s.transrule.size(); c++) {
-                    //TODO: should we be looping over sim rules instead?
-                    TransRule tr = s.transrule.get(c);
+                for (int c = 0; c < s.simrules.size(); c++) {
+                    TransRule tr = s.simrules.get(c);
                     if (!tr.appliesToClass(oldCells[x][y].className)) {
                         continue;
                     }
@@ -308,8 +318,8 @@ public class Logic {
     }
 
     public Logic() {
-        s = Simulation.getSimulation();
         iteration = -1;
+        s = Simulation.getSimulation();
     }
 
     public Dimension getDimension() {
