@@ -19,7 +19,6 @@ import javax.swing.JPanel;
  * @author sikarwar
  */
 public class EXGOLPanel extends JPanel {
-
     Logic l;
     Cell cells[][] = null;
     Hashtable<String, Color> classColors;
