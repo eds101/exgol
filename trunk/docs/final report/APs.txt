@@ -1,5 +1,7 @@
-fix errors in lang ref manual
-write conclusion section
-decide on tutorial example progrs
-update lang ref manual and grammar to support only glider/blinker/rectangle/dot
+Akshat, finalize tutorial example programs, 
+	- blinking EXGOL, GOL, comp species
+	- update the text accordingly
 write code appendix
+Integrate erics things
+
+fix class keyword in backend
